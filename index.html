@@ -924,15 +924,20 @@
 
     document.addEventListener('DOMContentLoaded', init);  
 
+    // ✅ UPDATED: Monetag SDK Inject with correct URL
     function injectMonetagSDK(zoneId) {
         if (!zoneId) return;
         if (document.getElementById('monetag-sdk-script')) return;
+        
         const script = document.createElement('script');
         script.id = 'monetag-sdk-script';
-        script.src = `https://libtl.com/sdk.js`;
+        // ✅ Correct Monetag CDN URL
+        script.src = `https://cdn.monetag.com/sdk.js`;
         script.setAttribute('data-zone', zoneId);
         script.setAttribute('data-sdk', `show_${zoneId}`);
         document.head.appendChild(script);
+        
+        console.log('✅ Monetag SDK Injected for Zone:', zoneId);
     }
 
     function init() {  
@@ -1161,7 +1166,7 @@
         );
 
         // ❌ REMOVED: Auto-detect story changes (All users were writing logs)
-        // ✅ Now logs are created only by Admin actions (Story Submit, Approve, Settings Update)
+        // ✅ Now logs are created only by Admin actions (Story Submit, Approve)
 
         // Initial load
         resetPagination();
@@ -3293,6 +3298,7 @@
 
     console.log('✅ বাংলা চটি গল্প App Loaded Successfully!');
     console.log('✅ Update Log System: Admin Only (Optimized)');
+    console.log('✅ Monetag SDK: Using correct CDN URL');
 </script>  
 </body>  
 </html>
