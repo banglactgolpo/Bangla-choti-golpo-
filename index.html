@@ -945,13 +945,51 @@
         
         const script = document.createElement('script');
         script.id = 'monetag-sdk-script';
-        // ✅ Correct Monetag CDN URL
+        // ✅ Correct Monetag SDK URL
         script.src = `https://cdn.monetag.com/sdk.js`;
         script.setAttribute('data-zone', zoneId);
         script.setAttribute('data-sdk', `show_${zoneId}`);
         document.head.appendChild(script);
         
         console.log('✅ Monetag SDK Injected for Zone:', zoneId);
+    }
+
+    // ✅ Direct Link Ad (App Close হবে না)
+    function triggerDirectLinkAd() { 
+        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+        if (isAdmin) return;
+
+        if (appSettings.adLink && appSettings.adLink.startsWith('http')) {
+            // ✅ Telegram In-App Browser (App Close করে না)
+            if (window.Telegram?.WebApp?.openLink) {
+                window.Telegram.WebApp.openLink(appSettings.adLink);
+            } else {
+                window.open(appSettings.adLink, '_blank');
+            }
+        } 
+    }
+
+    // ✅ Monetag + Direct Link Fallback
+    async function showAd() {
+        const zoneId = appSettings.adZoneId;
+        const showAdFunc = zoneId ? window[`show_${zoneId}`] : null;
+        
+        // Check if Monetag is loaded
+        if (typeof showAdFunc === 'function') {
+            try {
+                await showAdFunc();
+                console.log('✅ Monetag Ad shown');
+                return true;
+            } catch (error) {
+                console.warn('Monetag Ad Error:', error);
+                triggerDirectLinkAd();
+                return false;
+            }
+        } else {
+            console.warn('Monetag not loaded, using Direct Link');
+            triggerDirectLinkAd();
+            return false;
+        }
     }
 
     function init() {  
@@ -1357,23 +1395,6 @@
         container.innerHTML = html || '<div class="col-span-2 text-gray-400 text-sm py-4">⚠️ কোনো লিংক কনফিগার করা হয়নি</div>';
     }
 
-    // ==============================================
-    // ✅ SMART AD HANDLER (App Close হবে না)
-    // ==============================================
-    
-    function triggerDirectLinkAd() { 
-        const isAdmin = localStorage.getItem('isAdmin') === 'true';
-        if (isAdmin) return;
-
-        if (appSettings.adLink && appSettings.adLink.startsWith('http')) {
-            if (window.Telegram?.WebApp?.openLink) {
-                window.Telegram.WebApp.openLink(appSettings.adLink); 
-            } else {
-                window.open(appSettings.adLink, '_blank');
-            }
-        } 
-    }
-
     // Smart Social Link Open (Ad on Return)
     function openSocialLinkWithAd(url) {
         if (!url) return;
@@ -1450,27 +1471,19 @@
         btn.disabled = true;
         progress.classList.remove('hidden');
         progressBar.style.width = '0%';
-        statusText.innerText = '১ম বিজ্ঞাপন লোড হচ্ছে... (Rewarded Ad)';
+        statusText.innerText = '১ম বিজ্ঞাপন লোড হচ্ছে...';
 
         try {
-            // ✅ 1st Ad: Monetag Rewarded Ad
-            const zoneId = appSettings.adZoneId;
-            const showAdFunc = zoneId ? window[`show_${zoneId}`] : null;
-            
-            if (typeof showAdFunc === 'function') {
-                await showAdFunc();
-            } else {
-                // Fallback: Direct Link
-                triggerDirectLinkAd();
-            }
+            // ✅ 1st Ad: Monetag (যদি Load হয়)
+            await showAd();
             
             progressBar.style.width = '50%';
             statusText.innerText = 'ভেরিফাই করা হচ্ছে (৫ সেকেন্ড)...';
             await sleep(5000);
             
-            // ✅ 2nd Ad: Direct Link Ad
+            // ✅ 2nd Ad: Direct Link
             progressBar.style.width = '75%';
-            statusText.innerText = '২য় বিজ্ঞাপন লোড হচ্ছে... (Direct Link)';
+            statusText.innerText = '২য় বিজ্ঞাপন লোড হচ্ছে...';
             triggerDirectLinkAd();
             await sleep(3000);
             
@@ -1486,7 +1499,6 @@
             btn.disabled = false;
             progress.classList.add('hidden');
             
-            // Reopen the story
             openStory(currentStoryId);
             
         } catch (error) {
@@ -1506,24 +1518,14 @@
     
     function unlockFullStory() {
         const isAdmin = localStorage.getItem('isAdmin') === 'true';
-        const isVipStory = (document.getElementById('read-meta-cat').innerText === 'Movie erotica');
 
         if (!isAdmin) {
-            const zoneId = appSettings.adZoneId;
-            const isEnabled = appSettings.adsEnabled;
-            const showAdFunc = zoneId ? window[`show_${zoneId}`] : null;
-
-            if (isEnabled && typeof showAdFunc === 'function') {
-                showAdFunc()
-                    .then(() => handlePostAdUnlock(isVipStory))
-                    .catch(() => {
-                        triggerDirectLinkAd();
-                        handlePostAdUnlock(isVipStory);
-                    });
-            } else {
-                triggerDirectLinkAd();
-                handlePostAdUnlock(isVipStory);
-            }
+            // ✅ Monetag + Fallback
+            showAd().then(() => {
+                setTimeout(() => {
+                    revealStory();
+                }, 3000);
+            });
         } else {
             revealStory();
         }
