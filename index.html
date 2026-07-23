@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="app-title-tag">বাংলা চটি গল্প</title>
+    <title>বাংলা চটি গল্প</title>
     
-    <!-- Open Graph / Global Social Media Preview -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="বাংলা চটি গল্প - Premium Stories">
     <meta property="og:description" content="পড়ুন সেরা সব বাংলা চটি গল্পের ভাণ্ডার একদম ফ্রিতে।">
@@ -314,15 +314,22 @@
     </div>
 </div>
 
-<!-- Auth Modal -->  
+<!-- AUTH MODAL (Updated with Login/Signup Tabs) -->  
 <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-end md:justify-center p-0 md:p-5 backdrop-blur-sm transition-opacity">  
     <div class="bg-white p-6 rounded-t-3xl md:rounded-2xl w-full max-w-sm shadow-2xl h-auto absolute bottom-0 md:relative md:bottom-auto slide-up-modal">  
         <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6 md:hidden"></div>  
-        <h3 id="auth-title" class="text-2xl font-bold mb-2 text-center text-gray-800">স্বাগতম</h3>  
-        <p id="auth-subtitle" class="text-center text-sm text-gray-500 mb-4">লগইন করুন</p>  
+        
+        <!-- ✅ Login / Signup Tabs -->
+        <div class="flex border-b border-gray-100 mb-5">
+            <button type="button" onclick="setAuthMode('login')" id="auth-mode-login" class="flex-1 pb-2.5 font-bold text-sm text-blue-600 border-b-2 border-blue-600 text-center transition">🔐 লগইন</button>
+            <button type="button" onclick="setAuthMode('signup')" id="auth-mode-signup" class="flex-1 pb-2.5 font-bold text-sm text-gray-400 text-center transition">📝 সাইনআপ</button>
+        </div>
+        
+        <h3 id="auth-title" class="text-2xl font-bold mb-2 text-center text-gray-800">🔐 লগইন</h3>  
+        <p id="auth-subtitle" class="text-center text-sm text-gray-500 mb-4">আপনার অ্যাকাউন্টে লগইন করুন</p>  
         
         <div class="flex border-b border-gray-100 mb-5">
-            <button type="button" onclick="setAuthMethod('phone')" id="auth-tab-phone" class="flex-1 pb-2.5 font-bold text-sm text-blue-600 border-b-2 border-blue-600 text-center transition">📱 ফোন নম্বর</button>
+            <button type="button" onclick="setAuthMethod('phone')" id="auth-tab-phone" class="flex-1 pb-2.5 font-bold text-sm text-blue-600 border-b-2 border-blue-600 text-center transition">📱 ফোন</button>
             <button type="button" onclick="setAuthMethod('email')" id="auth-tab-email" class="flex-1 pb-2.5 font-bold text-sm text-gray-400 text-center transition">📧 ইমেইল</button>
         </div>
 
@@ -338,9 +345,11 @@
             <input type="password" id="auth-pass" placeholder="পাসওয়ার্ড" required class="w-full p-3.5 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:border-blue-500 text-gray-800">  
             <button type="submit" id="auth-submit-btn" class="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-200">লগইন</button>  
         </form>  
+        
         <div class="mt-6 text-center">  
             <button onclick="toggleAuthMode()" id="auth-toggle-link" class="text-sm text-gray-600 font-medium hover:text-blue-600 transition">নতুন অ্যাকাউন্ট খুলতে চান?</button>  
         </div>  
+        
         <button onclick="document.getElementById('auth-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 text-xl font-bold">&times;</button>  
     </div>  
 </div>  
@@ -1040,6 +1049,36 @@
     };
 
     // ==============================================
+    // AUTH MODE FUNCTIONS (Login/Signup)
+    // ==============================================
+    function setAuthMode(mode) {
+        const loginBtn = document.getElementById('auth-mode-login');
+        const signupBtn = document.getElementById('auth-mode-signup');
+        const title = document.getElementById('auth-title');
+        const subtitle = document.getElementById('auth-subtitle');
+        const submitBtn = document.getElementById('auth-submit-btn');
+        const toggleLink = document.getElementById('auth-toggle-link');
+        
+        if (mode === 'login') {
+            if (loginBtn) loginBtn.className = "flex-1 pb-2.5 font-bold text-sm text-blue-600 border-b-2 border-blue-600 text-center transition";
+            if (signupBtn) signupBtn.className = "flex-1 pb-2.5 font-bold text-sm text-gray-400 text-center transition";
+            if (title) title.innerText = "🔐 লগইন";
+            if (subtitle) subtitle.innerText = "আপনার অ্যাকাউন্টে লগইন করুন";
+            if (submitBtn) submitBtn.innerText = "লগইন";
+            if (toggleLink) toggleLink.innerText = "নতুন অ্যাকাউন্ট খুলতে চান?";
+            isSignUpMode = false;
+        } else {
+            if (signupBtn) signupBtn.className = "flex-1 pb-2.5 font-bold text-sm text-blue-600 border-b-2 border-blue-600 text-center transition";
+            if (loginBtn) loginBtn.className = "flex-1 pb-2.5 font-bold text-sm text-gray-400 text-center transition";
+            if (title) title.innerText = "📝 সাইনআপ";
+            if (subtitle) subtitle.innerText = "নতুন অ্যাকাউন্ট তৈরি করুন";
+            if (submitBtn) submitBtn.innerText = "সাইনআপ";
+            if (toggleLink) toggleLink.innerText = "ইতিমধ্যে অ্যাকাউন্ট আছে? লগইন করুন";
+            isSignUpMode = true;
+        }
+    }
+
+    // ==============================================
     // INITIALIZATION
     // ==============================================
     document.addEventListener('DOMContentLoaded', init);
@@ -1064,6 +1103,9 @@
         });
 
         setAuthMethod('phone');
+        
+        // ✅ Default to Login mode
+        setAuthMode('login');
 
         // Scroll listeners
         window.addEventListener('scroll', handleScroll);
@@ -1079,10 +1121,11 @@
             </div>
         `).join('');  
 
-        // Auth listener
-        auth.onAuthStateChanged(user => {  
+        // Auth listener with Auto Signup support
+        auth.onAuthStateChanged(async (user) => {  
             currentUser = user;  
             const adminBtn = document.getElementById('admin-indicator');  
+            
             if(user) {  
                 document.getElementById('auth-modal').classList.add('hidden');  
                 updateProfileUI(user);  
@@ -1107,6 +1150,23 @@
                 adminBtn.classList.add('hidden');  
                 resetProfileUI();  
                 localStorage.removeItem('isAdmin');
+                
+                // ✅ Auto Signup Check (First time users)
+                const autoPhone = localStorage.getItem('autoSignupPhone');
+                const autoPassword = localStorage.getItem('autoSignupPassword');
+                
+                if (autoPhone && autoPassword) {
+                    try {
+                        await auth.signInWithEmailAndPassword(autoPhone + '@bcg.com', autoPassword);
+                    } catch (e) {
+                        try {
+                            await auth.createUserWithEmailAndPassword(autoPhone + '@bcg.com', autoPassword);
+                            console.log('✅ Auto signup success');
+                        } catch (err) {
+                            console.warn('Auto signup failed:', err);
+                        }
+                    }
+                }
             }  
         });  
 
@@ -1119,7 +1179,8 @@
             const newStories = allStories.filter(s => s.status === 'Published');
             const lastSeen = localStorage.getItem('lastNotifSeen') || 0;
             const hasUnread = newStories.some(s => s.updatedAt?.seconds > lastSeen);
-            document.getElementById('notif-dot').classList.toggle('hidden', !hasUnread);
+            const dot = document.getElementById('notif-dot');
+            if (dot) dot.classList.toggle('hidden', !hasUnread);
         });
 
         // Update logs (admin only)
@@ -1178,12 +1239,18 @@
         db.collection('config').doc('app_settings').onSnapshot(doc => {  
             if(doc.exists) { 
                 appSettings = doc.data(); 
-                document.getElementById('app-nav-title').innerText = appSettings.name; 
-                document.getElementById('set-app-name').value = appSettings.name;
-                document.getElementById('set-ad-link').value = appSettings.adLink || '';
-                document.getElementById('set-ad-zone').value = appSettings.adZoneId || '';
-                document.getElementById('set-ads-toggle').value = appSettings.adsEnabled ? 'true' : 'false';
-                document.getElementById('set-adblock-toggle').value = appSettings.adBlockerEnabled ? 'true' : 'false';
+                const titleEl = document.getElementById('app-nav-title');
+                if (titleEl) titleEl.innerText = appSettings.name; 
+                const nameEl = document.getElementById('set-app-name');
+                const linkEl = document.getElementById('set-ad-link');
+                const zoneEl = document.getElementById('set-ad-zone');
+                const adsEl = document.getElementById('set-ads-toggle');
+                const abEl = document.getElementById('set-adblock-toggle');
+                if (nameEl) nameEl.value = appSettings.name;
+                if (linkEl) linkEl.value = appSettings.adLink || '';
+                if (zoneEl) zoneEl.value = appSettings.adZoneId || '';
+                if (adsEl) adsEl.value = appSettings.adsEnabled ? 'true' : 'false';
+                if (abEl) abEl.value = appSettings.adBlockerEnabled ? 'true' : 'false';
 
                 const isAdmin = localStorage.getItem('isAdmin') === 'true';
                 if (!isAdmin && appSettings.adsEnabled && appSettings.adZoneId) {
@@ -1202,9 +1269,12 @@
         db.collection('config').doc('notice_settings').onSnapshot(doc => {
             if(doc.exists) {
                 const data = doc.data();
-                document.getElementById('set-notice-title').value = data.title || '';
-                document.getElementById('set-notice-desc').value = data.desc || '';
-                document.getElementById('set-notice-toggle').value = data.enabled ? 'true' : 'false';
+                const titleEl = document.getElementById('set-notice-title');
+                const descEl = document.getElementById('set-notice-desc');
+                const toggleEl = document.getElementById('set-notice-toggle');
+                if (titleEl) titleEl.value = data.title || '';
+                if (descEl) descEl.value = data.desc || '';
+                if (toggleEl) toggleEl.value = data.enabled ? 'true' : 'false';
                 window.noticeConfig = data;
             }
         });
@@ -1226,10 +1296,14 @@
                     fbGroup: data.fbGroup || '',
                     customLinks: data.customLinks || []
                 };
-                document.getElementById('set-link-tg-chan').value = socialMainLinks.tgChannel;
-                document.getElementById('set-link-tg-chat').value = socialMainLinks.tgChat;
-                document.getElementById('set-link-fb-page').value = socialMainLinks.fbPage;
-                document.getElementById('set-link-fb-group').value = socialMainLinks.fbGroup;
+                const chanEl = document.getElementById('set-link-tg-chan');
+                const chatEl = document.getElementById('set-link-tg-chat');
+                const fbPageEl = document.getElementById('set-link-fb-page');
+                const fbGroupEl = document.getElementById('set-link-fb-group');
+                if (chanEl) chanEl.value = socialMainLinks.tgChannel;
+                if (chatEl) chatEl.value = socialMainLinks.tgChat;
+                if (fbPageEl) fbPageEl.value = socialMainLinks.fbPage;
+                if (fbGroupEl) fbGroupEl.value = socialMainLinks.fbGroup;
                 renderCustomSocialLinksAdmin();
                 renderUserProfileSocialLinks();
                 renderSocialJoinButtons();
@@ -1270,39 +1344,31 @@
         const emailContainer = document.getElementById('auth-email-container');
         
         if (method === 'phone') {
-            tabPhone.className = "flex-1 pb-2.5 font-bold text-sm text-blue-600 border-b-2 border-blue-600 text-center transition";
-            tabEmail.className = "flex-1 pb-2.5 font-bold text-sm text-gray-400 text-center transition";
-            phoneContainer.classList.remove('hidden');
-            emailContainer.classList.add('hidden');
-            document.getElementById('auth-phone-input').required = true;
-            document.getElementById('auth-email-input').required = false;
+            if (tabPhone) tabPhone.className = "flex-1 pb-2.5 font-bold text-sm text-blue-600 border-b-2 border-blue-600 text-center transition";
+            if (tabEmail) tabEmail.className = "flex-1 pb-2.5 font-bold text-sm text-gray-400 text-center transition";
+            if (phoneContainer) phoneContainer.classList.remove('hidden');
+            if (emailContainer) emailContainer.classList.add('hidden');
+            const phoneInput = document.getElementById('auth-phone-input');
+            if (phoneInput) phoneInput.required = true;
+            const emailInput = document.getElementById('auth-email-input');
+            if (emailInput) emailInput.required = false;
         } else {
-            tabPhone.className = "flex-1 pb-2.5 font-bold text-sm text-gray-400 text-center transition";
-            tabEmail.className = "flex-1 pb-2.5 font-bold text-sm text-blue-600 border-b-2 border-blue-600 text-center transition";
-            phoneContainer.classList.add('hidden');
-            emailContainer.classList.remove('hidden');
-            document.getElementById('auth-phone-input').required = false;
-            document.getElementById('auth-email-input').required = true;
+            if (tabPhone) tabPhone.className = "flex-1 pb-2.5 font-bold text-sm text-gray-400 text-center transition";
+            if (tabEmail) tabEmail.className = "flex-1 pb-2.5 font-bold text-sm text-blue-600 border-b-2 border-blue-600 text-center transition";
+            if (phoneContainer) phoneContainer.classList.add('hidden');
+            if (emailContainer) emailContainer.classList.remove('hidden');
+            const phoneInput = document.getElementById('auth-phone-input');
+            if (phoneInput) phoneInput.required = false;
+            const emailInput = document.getElementById('auth-email-input');
+            if (emailInput) emailInput.required = true;
         }
     }
 
     function toggleAuthMode() {
-        isSignUpMode = !isSignUpMode;
-        const title = document.getElementById('auth-title');
-        const subtitle = document.getElementById('auth-subtitle');
-        const submitBtn = document.getElementById('auth-submit-btn');
-        const toggleLink = document.getElementById('auth-toggle-link');
-        
         if (isSignUpMode) {
-            title.innerText = "নতুন অ্যাকাউন্ট";
-            subtitle.innerText = "আপনার তথ্য দিয়ে সাইনআপ করুন";
-            submitBtn.innerText = "সাইনআপ";
-            toggleLink.innerText = "ইতিমধ্যে অ্যাকাউন্ট আছে? লগইন করুন";
+            setAuthMode('login');
         } else {
-            title.innerText = "স্বাগতম";
-            subtitle.innerText = "লগইন করুন";
-            submitBtn.innerText = "লগইন";
-            toggleLink.innerText = "নতুন অ্যাকাউন্ট খুলতে চান?";
+            setAuthMode('signup');
         }
     }
 
@@ -1310,15 +1376,17 @@
         event.preventDefault();
         const password = document.getElementById('auth-pass').value;
         let email = "";
+        let phone = "";
         
         if (currentAuthMethod === 'phone') {
-            const phone = document.getElementById('auth-phone-input').value.trim();
+            phone = document.getElementById('auth-phone-input').value.trim();
             if (!phone) { showToast("❌ ফোন নম্বর লিখুন"); return; }
             if (!/^\d+$/.test(phone) || phone.length < 10) { showToast("❌ সঠিক ফোন নম্বর দিন"); return; }
-            email = phone + "@phone.app";
+            email = phone + "@bcg.com";
         } else {
             email = document.getElementById('auth-email-input').value.trim();
             if (!email) { showToast("❌ ইমেইল লিখুন"); return; }
+            phone = email.split('@')[0];
         }
         
         const submitBtn = document.getElementById('auth-submit-btn');
@@ -1328,16 +1396,35 @@
         
         try {
             if (isSignUpMode) {
+                // ✅ Signup
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                localStorage.setItem('autoSignupPhone', phone);
+                localStorage.setItem('autoSignupPassword', password);
                 showToast("✅ সাইনআপ সফল হয়েছে!");
                 await registerUserProfileInDB(userCredential.user);
             } else {
+                // ✅ Login
                 await auth.signInWithEmailAndPassword(email, password);
                 showToast("✅ লগইন সফল হয়েছে!");
             }
             document.getElementById('auth-modal').classList.add('hidden');
         } catch (error) {
-            showToast("❌ " + error.message);
+            // ✅ যদি User না থাকে, Auto Signup করিয়ে দিন
+            if (error.code === 'auth/user-not-found' && !isSignUpMode) {
+                showToast("🔄 অ্যাকাউন্ট খুঁজে পাওয়া যায়নি, নতুন তৈরি হচ্ছে...");
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    localStorage.setItem('autoSignupPhone', phone);
+                    localStorage.setItem('autoSignupPassword', password);
+                    showToast("✅ নতুন অ্যাকাউন্ট তৈরি হয়েছে!");
+                    await registerUserProfileInDB(userCredential.user);
+                    document.getElementById('auth-modal').classList.add('hidden');
+                } catch (signupError) {
+                    showToast("❌ " + signupError.message);
+                }
+            } else {
+                showToast("❌ " + error.message);
+            }
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerText = originalText;
@@ -1359,23 +1446,38 @@
     // ==============================================
     function updateProfileUI(user) {
         let displayIdentifier = user.email || "";
-        if (displayIdentifier.endsWith("@phone.app")) displayIdentifier = displayIdentifier.split("@")[0];
-        document.getElementById('profile-name').innerText = user.displayName || displayIdentifier.split('@')[0];
-        document.getElementById('profile-email').innerText = displayIdentifier;
-        document.getElementById('logout-btn').classList.remove('hidden');
-        document.getElementById('login-trigger-btn').classList.add('hidden');
-        document.getElementById('profile-stats').classList.remove('hidden');
-        document.getElementById('edit-profile-btn').classList.remove('hidden');
+        if (displayIdentifier.endsWith("@phone.app") || displayIdentifier.endsWith("@bcg.com")) {
+            displayIdentifier = displayIdentifier.split("@")[0];
+        }
+        const nameEl = document.getElementById('profile-name');
+        const emailEl = document.getElementById('profile-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginBtn = document.getElementById('login-trigger-btn');
+        const statsEl = document.getElementById('profile-stats');
+        const editBtn = document.getElementById('edit-profile-btn');
+        if (nameEl) nameEl.innerText = user.displayName || displayIdentifier.split('@')[0];
+        if (emailEl) emailEl.innerText = displayIdentifier;
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
+        if (loginBtn) loginBtn.classList.add('hidden');
+        if (statsEl) statsEl.classList.remove('hidden');
+        if (editBtn) editBtn.classList.remove('hidden');
     }
 
     function resetProfileUI() {
-        document.getElementById('profile-name').innerText = "স্বাগতম";
-        document.getElementById('profile-email').innerText = "লগইন করে আরো ফিচার পান";
-        document.getElementById('logout-btn').classList.add('hidden');
-        document.getElementById('login-trigger-btn').classList.remove('hidden');
-        document.getElementById('profile-stats').classList.add('hidden');
-        document.getElementById('edit-profile-btn').classList.add('hidden');
-        document.getElementById('profile-edit-section').classList.add('hidden');
+        const nameEl = document.getElementById('profile-name');
+        const emailEl = document.getElementById('profile-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginBtn = document.getElementById('login-trigger-btn');
+        const statsEl = document.getElementById('profile-stats');
+        const editBtn = document.getElementById('edit-profile-btn');
+        const editSection = document.getElementById('profile-edit-section');
+        if (nameEl) nameEl.innerText = "স্বাগতম";
+        if (emailEl) emailEl.innerText = "লগইন করে আরো ফিচার পান";
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        if (statsEl) statsEl.classList.add('hidden');
+        if (editBtn) editBtn.classList.add('hidden');
+        if (editSection) editSection.classList.add('hidden');
         localStorage.removeItem('isAdmin');
     }
 
@@ -1386,7 +1488,8 @@
         if (editSection.classList.contains('hidden')) {
             editSection.classList.remove('hidden');
             editBtn.classList.add('hidden');
-            document.getElementById('edit-username-input').value = currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'User');
+            const input = document.getElementById('edit-username-input');
+            if (input) input.value = currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'User');
         } else {
             editSection.classList.add('hidden');
             editBtn.classList.remove('hidden');
@@ -1394,7 +1497,9 @@
     }
 
     async function saveProfileName() {
-        const newName = document.getElementById('edit-username-input').value.trim();
+        const input = document.getElementById('edit-username-input');
+        if (!input) return;
+        const newName = input.value.trim();
         if (!newName || !currentUser) return;
         try {
             await currentUser.updateProfile({ displayName: newName });
@@ -1812,7 +1917,9 @@
     // SEARCH
     // ==============================================
     function handleSearch() {
-        const query = document.getElementById('search-input').value.trim();
+        const input = document.getElementById('search-input');
+        if (!input) return;
+        const query = input.value.trim();
         currentSearch = query;
         resetPagination();
         fetchStories(1, false);
@@ -2388,7 +2495,9 @@
         input.disabled = true;
         input.placeholder = 'পাঠানো হচ্ছে...';
         let displayName = currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Anonymous');
-        if (currentUser.email && currentUser.email.endsWith('@phone.app')) displayName = currentUser.email.split('@')[0];
+        if (currentUser.email && (currentUser.email.endsWith('@phone.app') || currentUser.email.endsWith('@bcg.com'))) {
+            displayName = currentUser.email.split('@')[0];
+        }
 
         try {
             const isModerated = appSettings.commentsModerated || false;
@@ -3057,7 +3166,9 @@
         if (!user) return;
         try {
             let identifier = user.email || '';
-            if (identifier.endsWith('@phone.app')) identifier = identifier.split('@')[0];
+            if (identifier.endsWith('@phone.app') || identifier.endsWith('@bcg.com')) {
+                identifier = identifier.split('@')[0];
+            }
             await db.collection('users').doc(user.uid).set({
                 userName: user.displayName || identifier.split('@')[0],
                 identifier: identifier,
