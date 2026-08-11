@@ -17,7 +17,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- ===== FIREBASE v10 COMPAT (Stable, reliable) ===== -->
+    <!-- ===== FIREBASE v10 COMPAT (Stable) ===== -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
@@ -1356,7 +1356,7 @@
         }
 
         // ==========================================================
-        // AUTH — Anonymous + Admin
+        // AUTH — Anonymous + Admin (UPDATED: Telegram name fix)
         // ==========================================================
         async function initAuth() {
             try {
@@ -1371,6 +1371,11 @@
 
                 const cred = await auth.signInAnonymously();
                 const user = cred.user;
+
+                // 🔥 NEW: Set Telegram username as Firebase Auth displayName
+                if (telegramName) {
+                    await user.updateProfile({ displayName: telegramName });
+                }
 
                 if (telegramId) {
                     await db.collection('users').doc(user.uid).set({
@@ -1423,9 +1428,9 @@
                 fetchStories(1, false);
 
                 return user;
-            } catch (err) {
-                console.error('Auth error:', err);
-                showToast('❌ লগইন ব্যর্থ: ' + err.message);
+            } catch (error) {
+                console.error('Auth error:', error);
+                showToast('❌ লগইন ব্যর্থ: ' + error.message);
                 document.getElementById('loading-screen').classList.add('hidden');
                 setTimeout(initAuth, 2000);
             }
