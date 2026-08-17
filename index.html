@@ -1,0 +1,3327 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>বাংলা চটি গল্প</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="বাংলা চটি গল্প" />
+    <meta property="og:description" content="পড়ুন সেরা সব বাংলা চটি গল্পের ভাণ্ডার একদম ফ্রিতে।" />
+    <meta property="og:image" content="https://i.postimg.cc/8z8hXb6s/logo.jpg" />
+
+    <link rel="manifest" href="manifest.json" />
+    <script src="https://telegram.org/js/telegram-web-app.js">
+    </script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+
+    <!-- Firebase v10 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js">
+    </script>
+
+    <!-- Security & Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js">
+    </script>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    </script>
+
+    <!-- Google Font: Hind Siliguri -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ─── RESET & BASE ─── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            transition: background 0.3s, color 0.3s;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+        body.night-mode {
+            background: #0b1120;
+            color: #e2e8f0;
+        }
+        .night-mode .bg-white {
+            background: #1e293b !important;
+        }
+        .night-mode .bg-gray-50 {
+            background: #1e293b !important;
+        }
+        .night-mode .bg-gray-100 {
+            background: #2d3748 !important;
+        }
+        .night-mode .bg-blue-50 {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        .night-mode .text-gray-800,
+        .night-mode .text-gray-900 {
+            color: #f1f5f9 !important;
+        }
+        .night-mode .text-gray-500,
+        .night-mode .text-gray-600,
+        .night-mode .text-gray-700 {
+            color: #94a3b8 !important;
+        }
+        .night-mode .border-gray-100,
+        .night-mode .border-gray-200,
+        .night-mode .border-gray-300 {
+            border-color: #334155 !important;
+        }
+        .night-mode input,
+        .night-mode textarea,
+        .night-mode select {
+            background: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #475569 !important;
+        }
+        .night-mode .bottom-nav {
+            background: #1e293b !important;
+            border-top-color: #334155 !important;
+        }
+        .night-mode .nav-btn.active {
+            color: #60a5fa !important;
+        }
+        .night-mode .admin-card {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        .night-mode .page-item {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        .night-mode .guideline-item {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        .night-mode .skeleton {
+            background: #2d3748 !important;
+        }
+        .night-mode #reading-bg {
+            opacity: 0.05 !important;
+        }
+        .night-mode .ql-container {
+            background: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        .night-mode .ql-editor {
+            color: #e2e8f0 !important;
+        }
+        .night-mode .ql-toolbar {
+            background: #1e293b !important;
+            border-color: #475569 !important;
+        }
+        .night-mode .ql-picker-label {
+            color: #e2e8f0 !important;
+        }
+        .night-mode .ql-stroke {
+            stroke: #e2e8f0 !important;
+        }
+        .night-mode .ql-fill {
+            fill: #e2e8f0 !important;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ─── LOADER ─── */
+        .loader {
+            border: 3px solid #f1f5f9;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* ─── TOAST ─── */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            width: 92%;
+            max-width: 400px;
+        }
+        .toast {
+            background: rgba(15, 23, 42, 0.92);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-16px);
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success {
+            background: #065f46;
+        }
+        .toast.error {
+            background: #991b1b;
+        }
+        .toast.warning {
+            background: #92400e;
+        }
+
+        /* ─── SKELETON ─── */
+        .skeleton {
+            background: #e2e8f0;
+            animation: pulse 1.5s infinite;
+            border-radius: 8px;
+        }
+        .night-mode .skeleton {
+            background: #2d3748;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* ─── NAV ─── */
+        .nav-btn.active {
+            color: #2563eb;
+        }
+        .nav-btn.active span {
+            font-weight: 700;
+        }
+        .night-mode .nav-btn.active {
+            color: #60a5fa;
+        }
+
+        /* ─── READING PROGRESS ─── */
+        #reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: #2563eb;
+            z-index: 999;
+            width: 0%;
+            transition: width 0.15s;
+        }
+
+        /* ─── QUILL ─── */
+        .ql-container {
+            min-height: 200px;
+            font-size: 16px;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+        .ql-editor {
+            min-height: 200px;
+        }
+
+        /* ─── ANIMATIONS ─── */
+        .fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .slide-up {
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* ─── READING BG ─── */
+        #reading-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.10;
+            z-index: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, background-image 0.5s ease;
+        }
+
+        /* ─── ADMIN TABS ─── */
+        .admin-tab-btn {
+            padding: 8px 14px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.25s;
+            white-space: nowrap;
+            cursor: pointer;
+            border-radius: 0;
+            background: transparent;
+        }
+        .admin-tab-btn.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        .night-mode .admin-tab-btn.active {
+            color: #60a5fa;
+            border-bottom-color: #60a5fa;
+        }
+
+        /* ─── CARDS ─── */
+        .admin-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            margin-bottom: 16px;
+        }
+        .night-mode .admin-card {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .admin-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .night-mode .admin-card-title {
+            color: #f1f5f9;
+            border-bottom-color: #334155;
+        }
+
+        .page-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+        }
+        .page-item:hover {
+            background: #f1f5f9;
+        }
+        .night-mode .page-item {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .night-mode .page-item:hover {
+            background: #2d3748;
+        }
+
+        .guideline-item {
+            padding: 14px 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 8px;
+        }
+        .night-mode .guideline-item {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        /* ─── BANNER AD ─── */
+        .banner-ad-container {
+            margin: 12px 0;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .night-mode .banner-ad-container {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .banner-ad-container iframe,
+        .banner-ad-container img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        /* ─── REACTION GRID ─── */
+        .reaction-grid {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .reaction-grid button {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 40px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+        .reaction-grid button:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .night-mode .reaction-grid button {
+            background: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        .reaction-grid button span:last-child {
+            font-size: 11px;
+            color: #64748b;
+        }
+        .night-mode .reaction-grid button span:last-child {
+            color: #94a3b8;
+        }
+
+        /* ─── BANNER PREVIEW ─── */
+        .banner-preview {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 12px;
+            border: 1px dashed #cbd5e1;
+        }
+        .night-mode .banner-preview {
+            background: #334155;
+            border-color: #475569;
+        }
+
+        /* ─── FILE DROP ─── */
+        .file-drop-zone {
+            border: 2px dashed #94a3b8;
+            border-radius: 16px;
+            padding: 28px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+        .file-drop-zone.dragover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        .night-mode .file-drop-zone {
+            background: #1e293b;
+            border-color: #475569;
+        }
+        .night-mode .file-drop-zone.dragover {
+            border-color: #60a5fa;
+            background: #1e3a5f;
+        }
+
+        /* ─── CATEGORY BADGE ─── */
+        .cat-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 20px;
+            margin: 2px 3px 2px 0;
+        }
+        .night-mode .cat-badge {
+            background: #1e3a5f;
+            color: #93c5fd;
+        }
+
+        /* ─── MISC ─── */
+        .vip-badge,
+        .vip-section-title,
+        .vip-card,
+        .vip-unlock-overlay {
+            display: none !important;
+        }
+
+        .bottom-nav {
+            background: #fff;
+            border-top: 1px solid #e5e7eb;
+        }
+        .night-mode .bottom-nav {
+            background: #1e293b;
+            border-top-color: #334155;
+        }
+
+        #reading-screen .ql-editor {
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+
+        .story-card {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .story-card:active {
+            transform: scale(0.98);
+        }
+
+        .category-chip {
+            transition: all 0.15s;
+        }
+        .category-chip:active {
+            transform: scale(0.96);
+        }
+
+        /* scrollbar for admin panels */
+        .admin-scroll {
+            max-height: 480px;
+            overflow-y: auto;
+        }
+        .admin-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .admin-scroll::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 8px;
+        }
+        .night-mode .admin-scroll::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* ensure quill in night mode */
+        .night-mode .ql-toolbar.ql-snow {
+            border-color: #475569 !important;
+        }
+        .night-mode .ql-container.ql-snow {
+            border-color: #475569 !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ─── READING PROGRESS ─── -->
+    <div id="reading-progress" class="hidden"></div>
+    <div id="toast-container"></div>
+
+    <!-- ─── LOADING SCREEN ─── -->
+    <div id="loading-screen" class="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center">
+        <div class="loader mb-4"></div>
+        <p class="text-gray-500 text-sm font-medium animate-pulse">লোড হচ্ছে...</p>
+    </div>
+
+    <!-- ─── 18+ GATE ─── -->
+    <div id="age-gate" class="hidden fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-5 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-2xl max-w-sm text-center shadow-2xl border-t-4 border-red-600">
+            <div class="text-5xl mb-4">🔞</div>
+            <h2 class="text-xl font-bold text-gray-900 mb-2">সতর্কীকরণ</h2>
+            <p class="text-gray-600 mb-6 text-sm">এই অ্যাপ শুধুমাত্র ১৮+ এর জন্য। সম্মতি দিচ্ছেন?</p>
+            <button onclick="acceptAgeGate()" class="bg-red-600 text-white px-8 py-2.5 rounded-lg font-bold w-full hover:bg-red-700 transition">হ্যাঁ, আমি ১৮+</button>
+        </div>
+    </div>
+
+    <!-- ─── AUTH MODAL (Admin) ─── -->
+    <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-end md:items-center justify-center p-0 md:p-5 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-t-3xl md:rounded-2xl w-full max-w-sm shadow-2xl slide-up">
+            <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-5 md:hidden"></div>
+            <h3 id="auth-title" class="text-2xl font-bold mb-2 text-center text-gray-800">অ্যাডমিন লগইন</h3>
+            <p id="auth-subtitle" class="text-center text-sm text-gray-500 mb-4">শুধুমাত্র অ্যাডমিনের জন্য</p>
+            <form onsubmit="handleAdminAuth(event)" class="space-y-4">
+                <input type="email" id="auth-email-input" placeholder="অ্যাডমিন ইমেইল" required class="w-full p-3.5 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:border-blue-500 text-gray-800" />
+                <input type="password" id="auth-pass" placeholder="পাসওয়ার্ড" required class="w-full p-3.5 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:border-blue-500 text-gray-800" />
+                <button type="submit" id="auth-submit-btn" class="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-200">লগইন</button>
+            </form>
+            <button onclick="document.getElementById('auth-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 text-xl font-bold">&times;</button>
+        </div>
+    </div>
+
+    <!-- ─── GUIDELINES POPUP ─── -->
+    <div id="guidelines-popup" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="w-full max-w-md bg-white border border-gray-100 rounded-3xl shadow-xl overflow-hidden slide-up">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-5 py-3 flex justify-between items-center">
+                <h3 class="text-white font-bold text-sm flex items-center gap-2"><span class="bg-white/20 p-1 rounded-lg">📢</span> অ্যাপ নির্দেশিকা</h3>
+                <span class="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full" id="guidelines-version">v2.0</span>
+            </div>
+            <div class="p-5" id="guidelines-popup-body">
+                <p class="text-sm text-gray-600 leading-relaxed mb-4" id="guidelines-popup-welcome">স্বাগতম <strong>বাংলা চটি গল্প</strong> অ্যাপে। এখানে পাবেন সব সেরা গল্পের ভাণ্ডার।</p>
+                <div class="bg-red-50 rounded-2xl p-4 border-2 border-dashed border-red-200">
+                    <h4 class="font-black text-sm text-red-700 uppercase tracking-wider mb-1">🔞 Strictly 18+</h4>
+                    <p class="text-[12px] text-red-600 leading-normal font-medium">এই অ্যাপ্লিকেশনে প্রকাশিত গল্পসমূহ শুধুমাত্র প্রাপ্তবয়স্ক (১৮+) পাঠকদের জন্য তৈরি।</p>
+                </div>
+                <button onclick="openGuidelinesPage()" class="mt-3 text-sm text-blue-600 font-bold underline">📖 বিস্তারিত জানতে দেখুন →</button>
+                <button onclick="handleGuidelinesClose()" class="mt-3 w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition transform active:scale-95">সম্মত আছি (Agree)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── GUIDELINES PAGE ─── -->
+    <div id="guidelines-page" class="hidden fixed inset-0 z-[150] bg-white overflow-y-auto pb-20 fade-in">
+        <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-gray-100 p-3 flex justify-between items-center z-20 shadow-sm">
+            <h2 class="text-xl font-bold text-gray-800">📖 অ্যাপ নির্দেশিকা</h2>
+            <button onclick="closeGuidelinesPage()" class="text-gray-800 p-2 rounded-full hover:bg-gray-100 transition text-2xl">&times;</button>
+        </div>
+        <div class="p-5 max-w-2xl mx-auto space-y-6" id="guidelines-content">
+            <div class="loader mx-auto"></div>
+        </div>
+    </div>
+
+    <!-- ─── LANDING ─── -->
+    <div id="landing-page" class="fixed inset-0 z-[60] flex flex-col items-center justify-center p-6 text-center text-white bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800">
+        <div class="bg-white/10 backdrop-blur-md p-10 rounded-3xl border border-white/20 shadow-2xl animate-[bounce_2s_infinite]">
+            <h1 class="text-4xl font-extrabold mb-2 tracking-wide" id="landing-title">বাংলা চটি গল্প</h1>
+            <p class="text-sm opacity-90 mb-8 font-light tracking-widest uppercase">Premium Stories</p>
+            <button onclick="enterApp()" class="bg-white text-indigo-700 px-10 py-3 rounded-full font-bold text-lg shadow-xl hover:bg-indigo-50 transition transform active:scale-95">গল্প পড়া শুরু করুন</button>
+        </div>
+    </div>
+
+    <!-- ─── ADBLOCK MODAL ─── -->
+    <div id="adblock-modal" class="hidden fixed inset-0 z-[120] bg-black/95 flex items-center justify-center p-5 backdrop-blur-md">
+        <div class="w-full max-w-sm bg-white p-6 rounded-3xl text-center shadow-2xl border-t-4 border-red-500 slide-up">
+            <div class="text-5xl mb-4">🛡️</div>
+            <h3 class="text-xl font-black text-gray-900 mb-2">অ্যাড-ব্লকার ডিটেক্টেড!</h3>
+            <p class="text-xs text-gray-600 leading-relaxed mb-6 font-medium">আমরা আপনাকে সম্পূর্ণ ফ্রিতে কন্টেন্ট দিয়ে থাকি। দয়া করে আমাদের সাপোর্ট করতে আপনার ব্রাউজারের অ্যাড-ব্লকার বা ব্রেভ সিল্ডটি অফ করুন এবং পেজটি রিফ্রেশ করুন।</p>
+            <button onclick="location.reload()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-md transition transform active:scale-95 text-xs uppercase tracking-wide">🔄 পেজ রিফ্রেশ করুন</button>
+        </div>
+    </div>
+
+    <!-- ─── DYNAMIC PAGE MODAL ─── -->
+    <div id="dynamic-page-modal" class="hidden fixed inset-0 z-[160] bg-white overflow-y-auto pb-20 fade-in">
+        <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-gray-100 p-3 flex justify-between items-center z-20 shadow-sm">
+            <h2 id="dynamic-page-modal-title" class="text-xl font-bold text-gray-800">পৃষ্ঠা</h2>
+            <button onclick="closeDynamicPage()" class="text-gray-800 p-2 rounded-full hover:bg-gray-100 transition text-2xl">&times;</button>
+        </div>
+        <div class="p-5 max-w-2xl mx-auto dynamic-page-content" id="dynamic-page-modal-body"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- ─── HOME SCREEN ─── -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div id="home-screen" class="pb-6 fade-in">
+        <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-100 px-5 py-3 flex justify-between items-center shadow-sm">
+            <h1 id="app-nav-title" class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 cursor-pointer" onclick="onAppTitleTap()">B.C.G</h1>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleNightMode()" class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition text-sm">🌓</button>
+                <button onclick="toggleNotifications()" class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition relative text-sm">
+                    🔔
+                    <span id="notif-dot" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Banner: Home -->
+        <div id="banner-home" class="px-4 mt-3 hidden"></div>
+
+        <!-- Continue Reading -->
+        <div id="continue-reading-banner" class="hidden px-4 mb-2 mt-4">
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-4 flex justify-between items-center shadow-lg text-white cursor-pointer active:scale-95 transition-transform" onclick="resumeReading()">
+                <div>
+                    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded uppercase tracking-wide mb-1 inline-block">Continue Reading</span>
+                    <h3 id="resume-title" class="font-bold text-sm line-clamp-1">গল্পের নাম</h3>
+                </div>
+                <div class="w-10 h-10 bg-white text-purple-600 rounded-full flex items-center justify-center text-lg shadow-md">▶</div>
+            </div>
+        </div>
+
+        <!-- Featured -->
+        <div id="hero-section" class="mt-4 px-4 hidden">
+            <h2 class="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wide">🔥 জনপ্রিয়</h2>
+            <div id="hero-card" class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform">
+                <div class="absolute top-0 right-0 p-3 opacity-10 text-6xl">✨</div>
+                <div class="relative z-10">
+                    <span class="bg-white/20 px-2 py-0.5 rounded text-xs mb-2 inline-block">MUST READ</span>
+                    <h3 id="hero-title" class="text-xl font-bold leading-tight mb-1">...</h3>
+                    <p id="hero-author" class="text-white/80 text-xs mb-3">...</p>
+                    <div class="flex items-center gap-2 text-xs font-medium">
+                        <span>👀 <span id="hero-views">0</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="px-4 mt-5">
+            <h2 class="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wide">📚 বিভাগ</h2>
+            <div id="category-filters" class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4"></div>
+        </div>
+
+        <!-- Search -->
+        <div class="p-4">
+            <div class="relative">
+                <span class="absolute left-4 top-3.5 text-gray-400">🔍</span>
+                <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="গল্প খুঁজুন..." class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:border-blue-500 text-gray-800 transition" />
+                <div id="search-suggestions" class="hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 z-30 max-h-60 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- Banner: Story List -->
+        <div id="banner-story-list" class="px-4 hidden"></div>
+
+        <!-- Stories Grid -->
+        <div id="stories-list" class="px-4 grid grid-cols-1 gap-4"></div>
+
+        <!-- Sentinel -->
+        <div id="sentinel" class="h-10 flex items-center justify-center text-gray-400 text-xs font-bold py-4">⬇️ স্ক্রল করে আরো গল্প দেখুন</div>
+
+        <div id="no-data-msg" class="hidden text-center py-16 text-gray-400">📂 কোনো গল্প পাওয়া যায়নি</div>
+        <button id="admin-indicator" onclick="showScreen('admin-panel'); selectAdminTab('admin-tab-dashboard');" class="hidden fixed bottom-24 right-5 bg-black text-white p-3 rounded-full shadow-2xl z-30 hover:scale-110 transition border-2 border-white text-sm">⚙️</button>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- ─── PROFILE SCREEN ─── -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div id="profile-screen" class="hidden min-h-screen bg-white pb-24 fade-in">
+        <div class="bg-gradient-to-b from-blue-600 to-blue-500 p-8 text-white text-center rounded-b-[2.5rem] shadow-lg relative">
+            <div class="w-20 h-20 bg-white/20 backdrop-blur rounded-full mx-auto mb-3 flex items-center justify-center text-3xl border-2 border-white/30">👤</div>
+            <h2 id="profile-name" class="text-xl font-bold">স্বাগতম</h2>
+            <p id="profile-email" class="text-blue-100 text-sm mb-4">লগইন করে আরো ফিচার পান</p>
+            <div id="profile-edit-section" class="hidden mt-4 bg-white/10 p-4 rounded-xl border border-white/20">
+                <input type="text" id="edit-username-input" placeholder="আপনার নাম লিখুন" class="w-full p-2 rounded-lg text-black mb-2 text-center text-sm font-bold" />
+                <div class="flex gap-2 justify-center">
+                    <button onclick="saveProfileName()" class="bg-blue-900 text-white px-4 py-1.5 rounded-lg text-sm font-bold">সেভ করুন</button>
+                    <button onclick="toggleProfileEdit()" class="bg-gray-200 text-gray-800 px-4 py-1.5 rounded-lg text-sm font-bold">বাতিল</button>
+                </div>
+            </div>
+            <button id="edit-profile-btn" onclick="toggleProfileEdit()" class="hidden mt-2 text-blue-100 text-xs underline">প্রোফাইল এডিট করুন</button>
+            <div id="profile-stats" class="hidden flex justify-center gap-6 mt-4">
+                <div class="text-center"><div class="font-bold text-lg" id="stat-fav-count">0</div><div class="text-xs opacity-80">ফেভারিট</div></div>
+                <div class="text-center"><div class="font-bold text-lg" id="stat-comment-count">0</div><div class="text-xs opacity-80">কমেন্ট</div></div>
+            </div>
+            <button onclick="handleLogout()" id="logout-btn" class="hidden mt-6 bg-white/10 hover:bg-white/20 px-6 py-2 rounded-full text-sm font-bold border border-white/30 transition">লগআউট</button>
+            <button id="login-trigger-btn" onclick="openAdminLogin()" class="mt-4 bg-white text-blue-600 px-8 py-2 rounded-full font-bold shadow-md">অ্যাডমিন লগইন</button>
+        </div>
+
+        <div class="p-5">
+            <!-- Social Links -->
+            <div id="user-profile-links" class="flex flex-wrap gap-3 justify-center mb-6"></div>
+
+            <!-- Banner: Profile -->
+            <div id="banner-profile" class="hidden mb-6"></div>
+
+            <h3 class="font-bold text-gray-800 text-lg mb-4 border-l-4 border-blue-500 pl-3">💖 আপনার ফেভারিট গল্প</h3>
+            <div id="fav-list-container" class="space-y-3"></div>
+
+            <h3 class="font-bold text-gray-800 text-lg mb-4 mt-8 border-l-4 border-purple-500 pl-3">⏳ সম্প্রতি পড়েছেন</h3>
+            <div id="recent-list-container" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- ─── READING SCREEN ─── -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div id="reading-screen" class="hidden min-h-screen bg-white z-40 pb-20 fade-in relative">
+        <div id="reading-bg"></div>
+        <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-gray-100 p-3 flex justify-between items-center z-20 shadow-sm relative">
+            <button onclick="closeReadingScreen()" class="text-gray-800 p-2 rounded-full hover:bg-gray-100 transition text-lg">⬅️</button>
+            <div class="flex items-center gap-2">
+                <button id="read-fav-btn" onclick="toggleReadScreenFavorite()" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-50 text-xl border">🤍</button>
+                <div class="flex bg-gray-100 rounded-lg p-1">
+                    <button onclick="changeFontSize('decrease')" class="px-3 py-0.5 text-sm font-bold text-gray-600 bg-white rounded shadow-sm mr-1">A-</button>
+                    <button onclick="changeFontSize('increase')" class="px-3 py-0.5 text-sm font-bold text-gray-600 bg-white rounded shadow-sm">A+</button>
+                </div>
+            </div>
+        </div>
+        <div class="p-5 max-w-2xl mx-auto relative z-10">
+            <img id="read-top-cover" src="" alt="Cover" class="w-full h-48 md:h-64 object-cover rounded-2xl mb-5 shadow-sm hidden" />
+            <h1 id="read-title" class="text-2xl md:text-3xl font-bold mb-2 text-gray-900 leading-snug">গল্পের নাম</h1>
+            <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500 mb-4 border-b border-gray-200 pb-4">
+                <span id="read-meta-author" class="font-medium text-blue-700">লেখক</span>
+                <span id="read-meta-date" class="text-gray-400"></span>
+                <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded uppercase font-bold text-[10px]" id="read-meta-cat">CAT</span>
+                <span>👁️ <span id="read-meta-views">0</span></span>
+                <span id="read-meta-tags" class="text-gray-400"></span>
+            </div>
+            <div id="read-summary" class="text-sm text-gray-600 bg-gray-50 p-4 rounded-xl border border-gray-100 mb-5 italic hidden"></div>
+            <div id="read-content" class="text-gray-800 leading-relaxed font-medium" style="font-size:18px;"></div>
+
+            <!-- Banner: Story Reading -->
+            <div id="banner-story-reading" class="hidden my-6"></div>
+
+            <!-- Reactions -->
+            <div class="mt-8 pt-6 border-t border-dashed border-gray-200 bg-gray-50/80 backdrop-blur rounded-2xl p-3 shadow-sm border relative z-20">
+                <div class="reaction-grid">
+                    <button onclick="submitStoryReaction('likes')"><span>👍</span><span id="react-likes-count">0</span></button>
+                    <button onclick="submitStoryReaction('loves')"><span>❤️</span><span id="react-loves-count">0</span></button>
+                    <button onclick="submitStoryReaction('fires')"><span>🔥</span><span id="react-fires-count">0</span></button>
+                    <button onclick="submitStoryReaction('wows')"><span>😮</span><span id="react-wows-count">0</span></button>
+                </div>
+            </div>
+
+            <!-- Related -->
+            <div class="mt-8 pt-8 border-t border-dashed border-gray-300">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">🔗 আরো পড়ুন</h3>
+                <div id="related-stories" class="grid grid-cols-1 gap-3"></div>
+            </div>
+
+            <!-- Comments -->
+            <div class="mt-10 bg-white/80 backdrop-blur rounded-2xl p-5 border border-gray-200 shadow-sm relative z-20">
+                <h3 class="text-lg font-bold mb-4">💬 মন্তব্য</h3>
+                <div class="flex gap-2 mb-6">
+                    <input id="comment-input" type="text" placeholder="মন্তব্য লিখুন..." class="flex-1 p-3 border border-gray-200 rounded-xl shadow-sm outline-none bg-white text-gray-800" />
+                    <button onclick="postComment()" class="bg-blue-600 text-white px-4 rounded-xl shadow-md">➤</button>
+                </div>
+                <div id="comments-display" class="space-y-3 max-h-60 overflow-y-auto"></div>
+            </div>
+
+            <!-- Share -->
+            <div class="mt-8 pb-10">
+                <button onclick="showShareModal()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3.5 rounded-xl font-bold shadow-lg flex justify-center items-center gap-2">📤 শেয়ার করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SHARE MODAL ─── -->
+    <div id="share-modal" class="hidden fixed inset-0 z-[100] bg-black/60 flex items-end justify-center backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-t-3xl p-6 slide-up relative">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-5"></div>
+            <h3 class="text-xl font-bold text-gray-800 mb-5 text-center">📤 গল্পটি শেয়ার করুন</h3>
+            <div id="share-card-container" class="mb-4 flex justify-center">
+                <div id="share-card" class="w-full max-w-xs bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-xl">
+                    <div class="text-center">
+                        <div class="text-3xl mb-2">📖</div>
+                        <h4 id="share-card-title" class="text-lg font-bold leading-tight">গল্পের নাম</h4>
+                        <p id="share-card-author" class="text-sm opacity-80 mt-1">লেখক</p>
+                        <div class="mt-4 text-xs border-t border-white/20 pt-3 opacity-70">📱 Read on BCG</div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <button onclick="shareViaTelegram()" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-4 rounded-2xl flex flex-col items-center gap-2 font-bold text-sm transition">
+                    <span class="text-2xl">✈️</span> টেলিগ্রামে দিন
+                </button>
+                <button onclick="copyStoryLink()" class="bg-gray-50 hover:bg-gray-100 text-gray-700 p-4 rounded-2xl flex flex-col items-center gap-2 border border-gray-200 font-bold text-sm transition">
+                    <span class="text-2xl">📋</span> লিংক কপি
+                </button>
+            </div>
+            <button onclick="document.getElementById('share-modal').classList.add('hidden')" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-xl font-bold mt-2 transition">বাতিল করুন</button>
+        </div>
+    </div>
+
+    <!-- ─── NOTIFICATION PANEL ─── -->
+    <div id="notif-panel" class="hidden fixed inset-0 z-[70] bg-black/60 flex items-end justify-center backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-t-3xl p-6 slide-up max-h-[70vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3 mb-3">
+                <h3 class="text-xl font-bold text-gray-800">📢 নোটিফিকেশন</h3>
+                <button onclick="toggleNotifications()" class="text-gray-500 text-xl">&times;</button>
+            </div>
+            <div id="notif-list" class="flex-1 overflow-y-auto space-y-3 pr-1"></div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- ─── ADMIN PANEL ─── -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div id="admin-panel" class="hidden min-h-screen bg-gray-50 pb-24 fade-in">
+        <div class="bg-white p-4 shadow-sm flex justify-between items-center sticky top-0 z-20 border-b">
+            <h2 class="text-xl font-bold text-gray-800">⚙️ অ্যাডমিন কন্ট্রোল প্যানেল</h2>
+            <button onclick="showScreen('home-screen')" class="text-sm bg-gray-200 px-3 py-1 rounded">বন্ধ</button>
+        </div>
+        <div class="bg-white border-b border-gray-200 sticky top-[60px] z-10 flex gap-1 overflow-x-auto scrollbar-hide px-3 py-2 shadow-sm">
+            <button onclick="selectAdminTab('admin-tab-dashboard')" id="admin-tab-dashboard" class="admin-tab-btn active">📊 ড্যাশবোর্ড</button>
+            <button onclick="selectAdminTab('admin-tab-write')" id="admin-tab-write" class="admin-tab-btn">📝 গল্প লিখুন</button>
+            <button onclick="selectAdminTab('admin-tab-stories')" id="admin-tab-stories" class="admin-tab-btn">📂 গল্প তালিকা</button>
+            <button onclick="selectAdminTab('admin-tab-categories')" id="admin-tab-categories" class="admin-tab-btn">🏷️ ক্যাটাগরি</button>
+            <button onclick="selectAdminTab('admin-tab-comments')" id="admin-tab-comments" class="admin-tab-btn">💬 কমেন্টস</button>
+            <button onclick="selectAdminTab('admin-tab-ads')" id="admin-tab-ads" class="admin-tab-btn">📢 এডস</button>
+            <button onclick="selectAdminTab('admin-tab-pages')" id="admin-tab-pages" class="admin-tab-btn">📄 পেজেস</button>
+            <button onclick="selectAdminTab('admin-tab-settings')" id="admin-tab-settings" class="admin-tab-btn">⚙️ সেটিংস</button>
+            <button onclick="selectAdminTab('admin-tab-notify')" id="admin-tab-notify" class="admin-tab-btn">🔔 নোটিফিকেশন</button>
+            <button onclick="selectAdminTab('admin-tab-updates')" id="admin-tab-updates" class="admin-tab-btn">📋 আপডেট লগ</button>
+            <button onclick="selectAdminTab('admin-tab-guidelines')" id="admin-tab-guidelines" class="admin-tab-btn">📖 নির্দেশিকা</button>
+        </div>
+
+        <div class="p-4 max-w-5xl mx-auto space-y-6">
+
+            <!-- ─── DASHBOARD ─── -->
+            <div id="admin-section-dashboard" class="admin-section space-y-6">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center"><span class="text-xs font-bold text-gray-400 block mb-1">মোট গল্প</span><span id="dash-total-stories" class="text-2xl font-black text-blue-600">0</span></div>
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center"><span class="text-xs font-bold text-gray-400 block mb-1">মোট ভিউ</span><span id="dash-total-views" class="text-2xl font-black text-emerald-600">0</span></div>
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center"><span class="text-xs font-bold text-gray-400 block mb-1">মোট ক্যাটাগরি</span><span id="dash-total-categories" class="text-2xl font-black text-amber-600">0</span></div>
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center"><span class="text-xs font-bold text-gray-400 block mb-1">মোট কমেন্ট</span><span id="dash-total-comments" class="text-2xl font-black text-purple-600">0</span></div>
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center"><span class="text-xs font-bold text-gray-400 block mb-1">ড্রাফ্ট</span><span id="dash-draft-stories" class="text-2xl font-black text-rose-600">0</span></div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border shadow-sm text-center space-y-3">
+                    <h4 class="font-bold text-gray-800">📥 ডেটাবেস ব্যাকআপ</h4>
+                    <p class="text-xs text-gray-500 leading-normal">সমস্ত গল্পের টাইটেল, ছবি ও সম্পূর্ণ কন্টেন্ট JSON ফাইল হিসেবে ডাউনলোড করুন।</p>
+                    <button onclick="exportStoryDatabaseJSON()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition-all active:scale-95 text-xs">📥 ডাউনলোড JSON</button>
+                </div>
+            </div>
+
+            <!-- ─── WRITE STORY ─── -->
+            <div id="admin-section-write" class="admin-section hidden">
+                <div class="bg-white p-5 rounded-xl shadow-sm border">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h3 id="form-mode-title" class="font-bold text-lg text-gray-800">📝 গল্প লিখুন</h3>
+                        <button onclick="resetForm()" class="text-xs text-blue-600 underline font-bold">Reset</button>
+                    </div>
+                    <form id="story-form" class="space-y-4">
+                        <input type="hidden" id="edit-id" />
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input id="story-title" required type="text" placeholder="গল্পের নাম" class="p-3 border rounded text-black w-full" />
+                            <input id="story-author" required type="text" placeholder="লেখকের নাম" class="p-3 border rounded text-black w-full" />
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input id="story-cover" type="text" placeholder="কভার ইমেজ URL (ঐচ্ছিক)" class="p-3 border rounded text-black w-full" />
+                            <div class="flex items-center gap-4">
+                                <label class="text-sm font-bold text-gray-700">স্ট্যাটাস</label>
+                                <select id="story-status" class="p-3 border rounded bg-white text-black w-full">
+                                    <option value="Published">প্রকাশিত</option>
+                                    <option value="Draft">ড্রাফ্ট</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3 p-3 border rounded-lg bg-blue-50/50 border-blue-200">
+                                <input type="checkbox" id="story-featured" class="w-5 h-5 accent-blue-600" />
+                                <label for="story-featured" class="text-sm font-bold text-blue-800">⭐ ফিচার্ড গল্প</label>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 border rounded-lg bg-amber-50/50 border-amber-200">
+                                <input type="checkbox" id="story-free" checked class="w-5 h-5 accent-amber-600" />
+                                <label for="story-free" class="text-sm font-bold text-amber-800">📖 ফ্রি গল্প (Ad ছাড়া)</label>
+                            </div>
+                        </div>
+                        <div id="ad-unlock-section" class="p-4 bg-gray-50 rounded-xl border border-gray-200 hidden">
+                            <p class="text-xs text-gray-500 font-medium">🔓 Ad Unlock গল্প — পাঠককে Ad দেখিয়ে সম্পূর্ণ গল্প আনলক করতে হবে।</p>
+                            <input type="text" id="story-ad-zone" placeholder="Unlock Ad Zone ID (ঐচ্ছিক)" class="mt-2 w-full p-2 border rounded text-black text-sm" />
+                        </div>
+                        <textarea id="story-summary" rows="2" placeholder="গল্পের সংক্ষিপ্ত বিবরণ (ঐচ্ছিক)" class="w-full p-3 border rounded text-black"></textarea>
+                        <div>
+                            <label class="text-sm font-bold text-gray-700 block mb-1">🏷️ ক্যাটাগরি (একাধিক নির্বাচন করুন)</label>
+                            <div id="multi-category-selector" class="flex flex-wrap gap-2 p-3 border rounded bg-gray-50 min-h-[48px]"></div>
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold text-gray-700 block mb-1">🔖 ট্যাগ (কমা দিয়ে আলাদা করুন)</label>
+                            <input id="story-tags" type="text" placeholder="যেমন: প্রেম, বিরহ, আবেগ" class="w-full p-3 border rounded text-black" />
+                        </div>
+                        <div class="bg-white text-black rounded border overflow-hidden">
+                            <div id="quill-editor-container"></div>
+                        </div>
+                        <button type="submit" id="story-submit-btn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700 transition">সাবমিট করুন</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ─── STORIES LIST ─── -->
+            <div id="admin-section-stories" class="admin-section hidden space-y-4">
+                <div class="relative"><span class="absolute left-3.5 top-3 text-gray-400">🔍</span><input type="text" id="admin-search-input" onkeyup="handleAdminStorySearch()" placeholder="তালিকায় গল্প খুঁজুন..." class="w-full pl-9 pr-4 py-2 border rounded-xl text-sm bg-white text-black shadow-sm outline-none" /></div>
+                <div id="admin-story-list" class="space-y-3 admin-scroll"></div>
+            </div>
+
+            <!-- ─── CATEGORIES ─── -->
+            <div id="admin-section-categories" class="admin-section hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border space-y-4">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">🏷️ ক্যাটাগরি ব্যবস্থাপনা</h3>
+                    <div class="flex flex-wrap gap-3">
+                        <input id="new-cat-name" type="text" placeholder="ক্যাটাগরির নাম" class="flex-1 min-w-[140px] p-2 border rounded text-black text-sm" />
+                        <input id="new-cat-desc" type="text" placeholder="বিবরণ (ঐচ্ছিক)" class="flex-1 min-w-[140px] p-2 border rounded text-black text-sm" />
+                        <input id="new-cat-icon" type="text" placeholder="আইকন (ঐচ্ছিক)" class="w-28 p-2 border rounded text-black text-sm" />
+                        <button onclick="addCategory()" class="bg-blue-600 text-white px-4 py-2 rounded font-bold shadow-md hover:bg-blue-700 transition">+ যুক্ত করুন</button>
+                    </div>
+                    <div id="admin-cat-list" class="flex flex-wrap gap-2 pt-2"></div>
+                </div>
+                <div id="category-counts-display" class="bg-white p-5 rounded-xl shadow-sm border">
+                    <h4 class="font-bold text-gray-800 text-sm mb-3">📊 ক্যাটাগরি ও গল্প সংখ্যা</h4>
+                    <div id="category-stats-list" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- ─── COMMENTS ─── -->
+            <div id="admin-section-comments" class="admin-section hidden space-y-4">
+                <div class="bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-3 shadow-sm">
+                    <div><h4 class="font-bold text-gray-800 text-sm">কমেন্ট মডারেশন</h4><span class="text-[10px] text-gray-500 block">অন থাকলে কমেন্ট এডমিন অনুমোদনের পর দেখাবে</span></div>
+                    <select id="set-comments-mod-toggle" onchange="updateCommentsModSettings()" class="p-2 border rounded bg-white text-black text-xs font-bold">
+                        <option value="false">সরাসরি পাবলিক</option>
+                        <option value="true">অনুমোদনসাপেক্ষ</option>
+                    </select>
+                </div>
+                <div id="admin-comments-moderation-list" class="space-y-3 admin-scroll"></div>
+            </div>
+
+            <!-- ─── ADS ─── -->
+            <div id="admin-section-ads" class="admin-section hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">📢 এডস ম্যানেজমেন্ট</h3>
+                    <p class="text-xs text-gray-500 mb-4">প্রতিটি পজিশন আলাদাভাবে কনফিগার করুন।</p>
+                    <div id="ads-management-container" class="space-y-4"></div>
+                    <button onclick="saveAllAdSettings()" class="mt-4 w-full bg-blue-600 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition">💾 সব এড সেটিংস সেভ করুন</button>
+                </div>
+            </div>
+
+            <!-- ─── PAGES ─── -->
+            <div id="admin-section-pages" class="admin-section hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">📄 পেজ ম্যানেজার</h3>
+                    <p class="text-xs text-gray-500 mb-4">প্রাইভেসি, টার্মস, সম্পর্কিত, সাহায্য, FAQ ইত্যাদি পেজ তৈরি করুন।</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <input id="new-page-slug" type="text" placeholder="স্লাগ (যেমন: privacy)" class="flex-1 min-w-[120px] p-2 border rounded text-black text-sm" />
+                        <input id="new-page-title" type="text" placeholder="পেজ টাইটেল" class="flex-1 min-w-[120px] p-2 border rounded text-black text-sm" />
+                        <button onclick="createNewPage()" class="bg-blue-600 text-white px-4 py-2 rounded font-bold shadow-md hover:bg-blue-700 transition">+ তৈরি</button>
+                    </div>
+                    <div id="admin-pages-list" class="space-y-2"></div>
+                </div>
+                <div id="page-editor-container" class="bg-white p-5 rounded-xl shadow-sm border hidden">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">✏️ পেজ সম্পাদনা</h3>
+                    <input type="hidden" id="edit-page-id" />
+                    <div class="mt-4 space-y-4">
+                        <input id="edit-page-title" type="text" placeholder="পেজ টাইটেল" class="w-full p-2 border rounded text-black text-sm" />
+                        <div class="bg-white text-black rounded border overflow-hidden"><div id="page-editor-quill"></div></div>
+                        <div class="flex gap-2">
+                            <button onclick="savePageContent()" class="bg-blue-600 text-white px-6 py-2 rounded font-bold">💾 সেভ করুন</button>
+                            <button onclick="closePageEditor()" class="bg-gray-200 text-gray-700 px-6 py-2 rounded font-bold">বাতিল</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── SETTINGS ─── -->
+            <div id="admin-section-settings" class="admin-section hidden space-y-6">
+                <div class="bg-white p-5 rounded-xl shadow-sm border space-y-4">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">⚙️ মূল সেটিংস</h3>
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <input id="set-app-name" type="text" placeholder="অ্যাপের নাম" class="p-2 border rounded text-black" />
+                        <input id="set-ad-zone" type="text" placeholder="Monetag Zone ID" class="p-2 border rounded text-black" />
+                        <select id="set-ads-toggle" class="p-2 border rounded bg-white text-black w-full">
+                            <option value="true">বিজ্ঞাপন চালু</option>
+                            <option value="false">বিজ্ঞাপন বন্ধ</option>
+                        </select>
+                        <select id="set-adblock-toggle" class="p-2 border rounded bg-white text-black">
+                            <option value="true">অ্যাডব্লকার লক চালু</option>
+                            <option value="false">অ্যাডব্লকার লক বন্ধ</option>
+                        </select>
+                    </div>
+                    <button onclick="updateSettings()" class="mt-4 bg-gray-800 text-white px-6 py-2 rounded-lg text-sm">সেভ করুন</button>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border space-y-4">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">🔗 সোশ্যাল লিংক</h3>
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <input id="set-link-tg-chan" type="text" placeholder="Telegram Channel URL" class="p-2 border rounded text-black" />
+                        <input id="set-link-tg-chat" type="text" placeholder="Telegram Group URL" class="p-2 border rounded text-black" />
+                        <input id="set-link-fb-page" type="text" placeholder="Facebook Page URL" class="p-2 border rounded text-black" />
+                        <input id="set-link-fb-group" type="text" placeholder="Facebook Group URL" class="p-2 border rounded text-black" />
+                    </div>
+                    <button onclick="updateSocialMainLinks()" class="bg-gray-800 text-white px-6 py-2 rounded-lg text-sm">সেভ করুন</button>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border space-y-4">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">🌐 রিমোট কনফিগ</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="text-xs font-bold text-gray-600 block mb-1">অ্যাপ নাম</label><input id="rc-app-name" type="text" class="w-full p-2 border rounded text-black text-sm" /></div>
+                        <div><label class="text-xs font-bold text-gray-600 block mb-1">অ্যাপ লোগো (URL)</label><input id="rc-app-logo" type="text" class="w-full p-2 border rounded text-black text-sm" /></div>
+                        <div><label class="text-xs font-bold text-gray-600 block mb-1">থিম</label><select id="rc-theme" class="w-full p-2 border rounded bg-white text-black text-sm"><option value="light">Light</option><option value="dark">Dark</option></select></div>
+                        <div><label class="text-xs font-bold text-gray-600 block mb-1">সংস্করণ</label><input id="rc-version" type="text" class="w-full p-2 border rounded text-black text-sm" /></div>
+                        <div><label class="text-xs font-bold text-gray-600 block mb-1">টেলিগ্রাম লিংক</label><input id="rc-telegram-link" type="text" class="w-full p-2 border rounded text-black text-sm" /></div>
+                        <div><label class="text-xs font-bold text-gray-600 block mb-1">সাপোর্ট লিংক</label><input id="rc-support-link" type="text" class="w-full p-2 border rounded text-black text-sm" /></div>
+                        <div><label class="text-xs font-bold text-gray-600 block mb-1">প্রাইভেসি পেজ</label><select id="rc-privacy-page" class="w-full p-2 border rounded bg-white text-black text-sm"></select></div>
+                        <div><label class="text-xs font-bold text-gray-600 block mb-1">টার্মস পেজ</label><select id="rc-terms-page" class="w-full p-2 border rounded bg-white text-black text-sm"></select></div>
+                        <div><label class="text-xs font-bold text-gray-600 block mb-1">মেইনটেন্যান্স</label><select id="rc-maintenance" class="w-full p-2 border rounded bg-white text-black text-sm"><option value="false">বন্ধ</option><option value="true">চালু</option></select></div>
+                        <div class="md:col-span-2"><label class="text-xs font-bold text-gray-600 block mb-1">ঘোষণা</label><textarea id="rc-announcement" rows="2" class="w-full p-2 border rounded text-black text-sm"></textarea></div>
+                    </div>
+                    <button onclick="saveRemoteConfig()" class="mt-4 w-full bg-blue-600 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition">💾 সব কনফিগ সেভ করুন</button>
+                </div>
+            </div>
+
+            <!-- ─── NOTIFICATIONS ─── -->
+            <div id="admin-section-notify" class="admin-section hidden space-y-6">
+                <div class="bg-white p-5 rounded-xl shadow-sm border space-y-4">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">🔔 নোটিফিকেশন পাঠান</h3>
+                    <p class="text-xs text-gray-500">সব ব্যবহারকারীর নোটিফিকেশন প্যানেলে বার্তা পাঠান।</p>
+                    <input id="notif-title-input" type="text" placeholder="শিরোনাম" class="w-full p-2.5 border rounded text-black text-sm" />
+                    <textarea id="notif-body-input" rows="3" placeholder="বার্তা লিখুন..." class="w-full p-2.5 border rounded text-black text-sm"></textarea>
+                    <button onclick="sendNotification()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl transition">📨 নোটিফিকেশন পাঠান</button>
+                </div>
+            </div>
+
+            <!-- ─── UPDATE LOGS ─── -->
+            <div id="admin-section-updates" class="admin-section hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">📋 আপডেট লগ</h3>
+                    <p class="text-xs text-gray-500 mb-4">Admin-এর করা পরিবর্তনের লগ</p>
+                    <div id="admin-update-logs" class="space-y-2 max-h-96 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <!-- ─── GUIDELINES ─── -->
+            <div id="admin-section-guidelines" class="admin-section hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border">
+                    <h3 class="font-bold text-lg text-gray-800 border-b pb-2">📖 নির্দেশিকা সম্পাদনা</h3>
+                    <p class="text-xs text-gray-500 mb-4">প্রতিটি সেকশন আপডেট করুন।</p>
+                    <div class="space-y-4" id="guidelines-admin-fields">
+                        <div><label class="text-sm font-bold text-gray-700 block mb-1">📖 স্বাগতম</label><textarea id="guidelines-welcome" rows="3" class="w-full p-3 border rounded-xl text-sm bg-gray-50 text-black outline-none focus:border-blue-500"></textarea></div>
+                        <div><label class="text-sm font-bold text-gray-700 block mb-1">📖 গল্প সিস্টেম</label><textarea id="guidelines-story" rows="4" class="w-full p-3 border rounded-xl text-sm bg-gray-50 text-black outline-none focus:border-blue-500"></textarea></div>
+                        <div><label class="text-sm font-bold text-gray-700 block mb-1">🔗 শেয়ার</label><textarea id="guidelines-share" rows="4" class="w-full p-3 border rounded-xl text-sm bg-gray-50 text-black outline-none focus:border-blue-500"></textarea></div>
+                        <div><label class="text-sm font-bold text-gray-700 block mb-1">🔒 প্রাইভেসি</label><textarea id="guidelines-privacy" rows="3" class="w-full p-3 border rounded-xl text-sm bg-gray-50 text-black outline-none focus:border-blue-500"></textarea></div>
+                    </div>
+                    <button onclick="updateGuidelines()" class="mt-4 w-full bg-blue-600 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition">💾 নির্দেশিকা আপডেট করুন</button>
+                </div>
+            </div>
+
+        </div><!-- end p-4 -->
+    </div><!-- end admin-panel -->
+
+    <!-- ─── ADMIN COMMENT MODAL ─── -->
+    <div id="admin-comment-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl h-[80vh] flex flex-col slide-up">
+            <div class="p-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
+                <div><h3 class="font-bold text-lg">কমেন্টস</h3><p id="acm-title" class="text-xs text-gray-500">গল্পের নাম</p></div>
+                <button onclick="document.getElementById('admin-comment-modal').classList.add('hidden')" class="text-gray-500 text-xl font-bold">&times;</button>
+            </div>
+            <div id="acm-list" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50"></div>
+        </div>
+    </div>
+
+    <!-- ─── BOTTOM NAV ─── -->
+    <div id="bottom-nav" class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-50 px-6 py-2 flex justify-between items-center bottom-nav">
+        <button onclick="switchTab('home')" class="nav-btn active flex flex-col items-center gap-1 p-2 text-gray-400 transition" id="nav-home"><span class="text-[20px]">🏠</span><span class="text-[10px]">হোম</span></button>
+        <button onclick="switchTab('favorites')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 transition" id="nav-favorites"><span class="text-[20px]">❤️</span><span class="text-[10px]">ফেভারিট</span></button>
+        <button onclick="switchTab('profile')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 transition" id="nav-profile"><span class="text-[20px]">👤</span><span class="text-[10px]">প্রোফাইল</span></button>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- ─── JAVASCRIPT ─── -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <script>
+        // ════════════════════════════════════════════════════════════════
+        // 1. FIREBASE INIT (v10 Compat) — NEW CONFIG
+        // ════════════════════════════════════════════════════════════════
+        const firebaseConfig = {
+            apiKey: "AIzaSyCc-A84wYKH-DTpDh2eUF0zL2lz7Kscm5E",
+            authDomain: "bcgapp-32e53.firebaseapp.com",
+            databaseURL: "https://bcgapp-32e53-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "bcgapp-32e53",
+            storageBucket: "bcgapp-32e53.firebasestorage.app",
+            messagingSenderId: "630824021870",
+            appId: "1:630824021870:web:ceaba3490755ce33bc9b7f"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        db.enablePersistence().catch(() => {});
+
+        // ════════════════════════════════════════════════════════════════
+        // 2. GLOBAL STATE
+        // ════════════════════════════════════════════════════════════════
+        let currentUser = null;
+        let currentStoryId = null;
+        let currentFontSize = 18;
+        let activeTab = 'home';
+        let stories = [];
+        let categories = [];
+        let isAdmin = false;
+        let adminTitleTapCount = 0;
+        let allStoriesLoaded = false;
+        let isLoading = false;
+        let lastDoc = null;
+        let currentCategory = 'ALL';
+        let currentSearch = '';
+        let currentStoryFullContent = '';
+        let currentStoryAdHtml = '';
+        let commentUnsubscribe = null;
+        let quillEditor = null;
+        let pageEditorQuill = null;
+        let notifications = [];
+        let updateLogs = [];
+        let scrollTimeout = null;
+        let shareVerificationTimer = null;
+        let isShareVerified = false;
+
+        // App settings
+        let appSettings = { name: 'বাংলা চটি গল্প', adZoneId: '', adsEnabled: false, adBlockerEnabled: false };
+        let socialMainLinks = { tgChannel: '', tgChat: '', fbPage: '', fbGroup: '' };
+        let customSocialLinks = [];
+        let AD_SETTINGS = {
+            home: { enabled: false, zoneId: '' },
+            storyList: { enabled: false, zoneId: '' },
+            storyReading: { enabled: false, zoneId: '' },
+            profile: { enabled: false, zoneId: '' },
+            interstitial: { enabled: false, zoneId: '' },
+            unlock: { enabled: false, zoneId: '' },
+            popunder: { enabled: false, zoneId: '' }
+        };
+        let REMOTE_CONFIG = {
+            appName: 'বাংলা চটি গল্প',
+            appLogo: '',
+            theme: 'light',
+            version: 'v2.0',
+            telegramLink: '',
+            supportLink: '',
+            privacyPage: '',
+            termsPage: '',
+            maintenance: false,
+            announcement: ''
+        };
+
+        // ════════════════════════════════════════════════════════════════
+        // 3. TOAST
+        // ════════════════════════════════════════════════════════════════
+        function showToast(msg, type = '') {
+            const c = document.getElementById('toast-container');
+            if (!c) return;
+            const t = document.createElement('div');
+            t.className = 'toast' + (type ? ' ' + type : '');
+            t.innerText = msg;
+            c.appendChild(t);
+            requestAnimationFrame(() => t.classList.add('show'));
+            setTimeout(() => {
+                t.classList.remove('show');
+                setTimeout(() => t.remove(), 300);
+            }, 3800);
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 4. AUTH
+        // ════════════════════════════════════════════════════════════════
+        async function initAuth() {
+            try {
+                const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+                let telegramId = null,
+                    telegramName = 'User';
+                if (tgUser) {
+                    telegramId = tgUser.id?.toString() || null;
+                    telegramName = tgUser.username || tgUser.first_name || 'User';
+                }
+                const cred = await auth.signInAnonymously();
+                const user = cred.user;
+                if (telegramName) await user.updateProfile({ displayName: telegramName });
+                const payload = {
+                    userName: telegramName,
+                    identifier: telegramId ? 'tg_' + telegramId : user.uid,
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+                    isBanned: false
+                };
+                if (telegramId) payload.telegramId = telegramId;
+                await db.collection('users').doc(user.uid).set(payload, { merge: true });
+
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists && doc.data().email === 'bcg332006@gmail.com') {
+                    isAdmin = true;
+                    document.getElementById('admin-indicator').classList.remove('hidden');
+                    localStorage.setItem('isAdmin', 'true');
+                    setupAdminListeners();
+                }
+                currentUser = user;
+                updateProfileUI(user);
+                loadProfileStats(user);
+                document.getElementById('loading-screen').classList.add('hidden');
+                renderCategoriesUI();
+                resetPagination();
+                fetchStories(1, false);
+                checkReadingHistory();
+                renderSocialJoinButtons();
+                return user;
+            } catch (e) {
+                console.error('Auth error:', e);
+                showToast('❌ লগইন ব্যর্থ: ' + e.message);
+                document.getElementById('loading-screen').classList.add('hidden');
+                setTimeout(initAuth, 2000);
+            }
+        }
+
+        function handleAdminAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email-input').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+            if (!email || !pass) { showToast('⚠️ ইমেইল ও পাসওয়ার্ড দিন'); return; }
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(cred => {
+                    if (cred.user.email === 'bcg332006@gmail.com') {
+                        isAdmin = true;
+                        localStorage.setItem('isAdmin', 'true');
+                        document.getElementById('admin-indicator').classList.remove('hidden');
+                        document.getElementById('auth-modal').classList.add('hidden');
+                        showToast('✅ অ্যাডমিন লগইন সফল!');
+                        setupAdminListeners();
+                        showScreen('admin-panel');
+                        selectAdminTab('admin-tab-dashboard');
+                    } else {
+                        showToast('⛔ শুধুমাত্র অ্যাডমিন লগইন করতে পারেন');
+                        auth.signOut();
+                    }
+                })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function openAdminLogin() { document.getElementById('auth-modal').classList.remove('hidden'); }
+
+        function onAppTitleTap() {
+            adminTitleTapCount++;
+            if (adminTitleTapCount >= 5) {
+                adminTitleTapCount = 0;
+                if (!isAdmin) { showToast('🔐 অ্যাডমিন লগইন প্রয়োজন');
+                    openAdminLogin(); } else { showScreen('admin-panel');
+                    selectAdminTab('admin-tab-dashboard'); }
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('লগআউট করতে চান?')) {
+                auth.signOut();
+                isAdmin = false;
+                localStorage.removeItem('isAdmin');
+                document.getElementById('admin-indicator').classList.add('hidden');
+                showToast('✅ লগআউট সম্পন্ন');
+                resetProfileUI();
+            }
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                if (user.email === 'bcg332006@gmail.com') {
+                    isAdmin = true;
+                    localStorage.setItem('isAdmin', 'true');
+                    document.getElementById('admin-indicator').classList.remove('hidden');
+                    setupAdminListeners();
+                }
+                updateProfileUI(user);
+                loadProfileStats(user);
+            } else {
+                initAuth();
+            }
+        });
+
+        // ════════════════════════════════════════════════════════════════
+        // 5. PROFILE UI
+        // ════════════════════════════════════════════════════════════════
+        function updateProfileUI(user) {
+            if (!user) return;
+            const name = user.displayName || 'ব্যবহারকারী';
+            document.getElementById('profile-name').innerText = name;
+            document.getElementById('profile-email').innerText = 'UID: ' + user.uid.slice(0, 8);
+            document.getElementById('logout-btn').classList.remove('hidden');
+            document.getElementById('login-trigger-btn').classList.add('hidden');
+            document.getElementById('profile-stats').classList.remove('hidden');
+            document.getElementById('edit-profile-btn').classList.remove('hidden');
+        }
+
+        function resetProfileUI() {
+            document.getElementById('profile-name').innerText = 'স্বাগতম';
+            document.getElementById('profile-email').innerText = 'লগইন করে আরো ফিচার পান';
+            document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('login-trigger-btn').classList.remove('hidden');
+            document.getElementById('profile-stats').classList.add('hidden');
+            document.getElementById('edit-profile-btn').classList.add('hidden');
+            document.getElementById('profile-edit-section').classList.add('hidden');
+        }
+
+        function toggleProfileEdit() {
+            const sec = document.getElementById('profile-edit-section');
+            const btn = document.getElementById('edit-profile-btn');
+            if (!sec || !btn) return;
+            if (sec.classList.contains('hidden')) {
+                sec.classList.remove('hidden');
+                btn.classList.add('hidden');
+                document.getElementById('edit-username-input').value = currentUser?.displayName || 'User';
+            } else {
+                sec.classList.add('hidden');
+                btn.classList.remove('hidden');
+            }
+        }
+
+        function saveProfileName() {
+            const name = document.getElementById('edit-username-input').value.trim();
+            if (!name || !currentUser) return;
+            currentUser.updateProfile({ displayName: name })
+                .then(() => {
+                    db.collection('users').doc(currentUser.uid).set({ userName: name }, { merge: true });
+                    showToast('✅ নাম আপডেট হয়েছে');
+                    toggleProfileEdit();
+                    updateProfileUI(currentUser);
+                })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function loadProfileStats(user) {
+            if (!user) return;
+            const favs = getFavorites();
+            document.getElementById('stat-fav-count').innerText = favs.length;
+            db.collection('users').doc(user.uid).get()
+                .then(doc => { if (doc.exists) document.getElementById('stat-comment-count').innerText = doc.data()
+                        .commentsCount || 0; })
+                .catch(() => {});
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 6. FAVORITES
+        // ════════════════════════════════════════════════════════════════
+        function getFavorites() { return JSON.parse(localStorage.getItem('favStories')) || []; }
+
+        function toggleFavorite(e, id) {
+            e.stopPropagation();
+            let favs = getFavorites();
+            favs = favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id];
+            localStorage.setItem('favStories', JSON.stringify(favs));
+            showToast(favs.includes(id) ? '❤️ ফেভারিটে যুক্ত' : '💔 সরানো হয়েছে');
+            const t = e.currentTarget || e.target;
+            if (t) t.innerText = favs.includes(id) ? '❤️' : '🤍';
+        }
+
+        function toggleReadScreenFavorite() {
+            if (!currentStoryId) return;
+            let favs = getFavorites();
+            favs = favs.includes(currentStoryId) ? favs.filter(f => f !== currentStoryId) : [...favs, currentStoryId];
+            localStorage.setItem('favStories', JSON.stringify(favs));
+            const btn = document.getElementById('read-fav-btn');
+            if (btn) btn.innerText = favs.includes(currentStoryId) ? '❤️' : '🤍';
+            showToast(favs.includes(currentStoryId) ? '❤️ ফেভারিটে যুক্ত' : '💔 সরানো হয়েছে');
+            renderProfileFavorites();
+        }
+
+        function renderProfileFavorites() {
+            const c = document.getElementById('fav-list-container');
+            if (!c) return;
+            const favs = getFavorites();
+            if (favs.length === 0) { c.innerHTML = '<p class="text-center text-gray-400 py-6">📂 ফেভারিট নেই</p>'; return; }
+            const list = stories.filter(s => favs.includes(s.id));
+            if (list.length === 0) { c.innerHTML = '<p class="text-center text-gray-400 py-6">📂 ফেভারিট গল্প পাওয়া যায়নি</p>'; return; }
+            c.innerHTML = list.map(s => `
+                <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="openStory('${s.id}')">
+                    <div><h4 class="font-bold text-sm">${s.title}</h4><span class="text-xs text-gray-400">${s.author}</span></div>
+                    <button onclick="event.stopPropagation(); toggleFavorite(event, '${s.id}')" class="text-lg">❤️</button>
+                </div>
+            `).join('');
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 7. RECENTLY READ
+        // ════════════════════════════════════════════════════════════════
+        function getRecentlyRead() { return JSON.parse(localStorage.getItem('recentlyRead')) || []; }
+
+        function addRecentlyRead(id, title) {
+            let list = getRecentlyRead();
+            list = list.filter(item => item.id !== id);
+            list.unshift({ id, title, timestamp: Date.now() });
+            if (list.length > 20) list = list.slice(0, 20);
+            localStorage.setItem('recentlyRead', JSON.stringify(list));
+            renderRecentlyRead();
+        }
+
+        function renderRecentlyRead() {
+            const c = document.getElementById('recent-list-container');
+            if (!c) return;
+            const list = getRecentlyRead();
+            if (list.length === 0) { c.innerHTML = '<p class="text-center text-gray-400 py-6">⏳ কোনো গল্প পড়েননি</p>'; return; }
+            const items = list.slice(0, 10);
+            c.innerHTML = items.map(item => `
+                <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="openStory('${item.id}')">
+                    <div><h4 class="font-bold text-sm">${item.title}</h4><span class="text-[10px] text-gray-400">${new Date(item.timestamp).toLocaleDateString('bn-BD')}</span></div>
+                    <span class="text-gray-400">▶</span>
+                </div>
+            `).join('');
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 8. NAVIGATION
+        // ════════════════════════════════════════════════════════════════
+        function switchTab(tab) {
+            activeTab = tab;
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('nav-' + tab);
+            if (btn) btn.classList.add('active');
+            ['home-screen', 'profile-screen', 'reading-screen'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            if (tab === 'home' || tab === 'favorites') {
+                document.getElementById('home-screen').classList.remove('hidden');
+                currentCategory = tab === 'favorites' ? 'FAVORITES' : 'ALL';
+                resetPagination();
+                fetchStories(1, false);
+                checkReadingHistory();
+            } else if (tab === 'profile') {
+                document.getElementById('profile-screen').classList.remove('hidden');
+                renderProfileFavorites();
+                renderRecentlyRead();
+                renderUserProfileSocialLinks();
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function showScreen(id) {
+            ['home-screen', 'reading-screen', 'admin-panel', 'profile-screen'].forEach(s => {
+                const el = document.getElementById(s);
+                if (el) el.classList.add('hidden');
+            });
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('hidden');
+            if (id === 'admin-panel') renderAdminDashboard();
+        }
+
+        function selectAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
+            const btn = document.getElementById(tabId);
+            if (btn) btn.classList.add('active');
+            const map = {
+                'admin-tab-dashboard': 'admin-section-dashboard',
+                'admin-tab-write': 'admin-section-write',
+                'admin-tab-stories': 'admin-section-stories',
+                'admin-tab-categories': 'admin-section-categories',
+                'admin-tab-comments': 'admin-section-comments',
+                'admin-tab-ads': 'admin-section-ads',
+                'admin-tab-pages': 'admin-section-pages',
+                'admin-tab-settings': 'admin-section-settings',
+                'admin-tab-notify': 'admin-section-notify',
+                'admin-tab-updates': 'admin-section-updates',
+                'admin-tab-guidelines': 'admin-section-guidelines'
+            };
+            const sec = document.getElementById(map[tabId]);
+            if (sec) sec.classList.remove('hidden');
+            if (tabId === 'admin-tab-write') initQuill();
+            if (tabId === 'admin-tab-categories') { renderAdminCategories();
+                renderCategoryStats(); }
+            if (tabId === 'admin-tab-comments') renderAdminCommentsModerationUI();
+            if (tabId === 'admin-tab-ads') renderAdsManagementUI();
+            if (tabId === 'admin-tab-pages') renderPagesList();
+            if (tabId === 'admin-tab-settings') loadSettingsForAdmin();
+            if (tabId === 'admin-tab-guidelines') loadGuidelinesForAdmin();
+            if (tabId === 'admin-tab-updates') renderAdminUpdateLogs(updateLogs);
+            if (tabId === 'admin-tab-stories') renderAdminListUI();
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 9. READING HISTORY
+        // ════════════════════════════════════════════════════════════════
+        function checkReadingHistory() {
+            const lastRead = JSON.parse(localStorage.getItem('last_read'));
+            const banner = document.getElementById('continue-reading-banner');
+            if (!banner) return;
+            if (lastRead && lastRead.id && lastRead.position > 200) {
+                banner.classList.remove('hidden');
+                document.getElementById('resume-title').innerText = lastRead.title;
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function resumeReading() {
+            const lastRead = JSON.parse(localStorage.getItem('last_read'));
+            if (lastRead && lastRead.id) {
+                openStory(lastRead.id);
+                setTimeout(() => window.scrollTo({ top: lastRead.position, behavior: 'smooth' }), 350);
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 10. CATEGORIES
+        // ════════════════════════════════════════════════════════════════
+        function renderCategoriesUI() {
+            const container = document.getElementById('category-filters');
+            if (!container) return;
+            let html =
+                `<button onclick="filterByCat('ALL')" class="category-chip px-4 py-1.5 bg-blue-600 text-white border border-blue-600 rounded-full text-sm font-bold shadow-md transition">সব</button>`;
+            categories.forEach(c => {
+                html +=
+                    `<button onclick="filterByCat('${c.name}')" class="category-chip px-4 py-1.5 bg-white text-gray-600 border border-gray-200 rounded-full text-sm shadow-sm transition">${c.icon || '🏷️'} ${c.name}</button>`;
+            });
+            container.innerHTML = html;
+
+            // Multi-category selector for admin
+            const mc = document.getElementById('multi-category-selector');
+            if (mc) {
+                mc.innerHTML = categories.map(c => `
+                    <label class="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-gray-200 text-sm cursor-pointer hover:bg-gray-50">
+                        <input type="checkbox" class="cat-checkbox" value="${c.name}" /> ${c.icon || '🏷️'} ${c.name}
+                    </label>
+                `).join('');
+            }
+        }
+
+        function filterByCat(cat) {
+            document.querySelectorAll('#category-filters button').forEach(b => {
+                b.className =
+                    "category-chip px-4 py-1.5 bg-white text-gray-600 border border-gray-200 rounded-full text-sm shadow-sm transition";
+            });
+            if (window.event && window.event.target) {
+                window.event.target.className =
+                    "category-chip px-4 py-1.5 bg-blue-600 text-white border border-blue-600 rounded-full text-sm font-bold shadow-md transition";
+            }
+            currentCategory = cat;
+            resetPagination();
+            fetchStories(1, false);
+        }
+
+        function addCategory() {
+            const name = document.getElementById('new-cat-name').value.trim();
+            const desc = document.getElementById('new-cat-desc').value.trim();
+            const icon = document.getElementById('new-cat-icon').value.trim() || '🏷️';
+            if (!name) { showToast('⚠️ ক্যাটাগরির নাম দিন'); return; }
+            if (categories.some(c => c.name === name)) { showToast('⚠️ ইতিমধ্যে আছে'); return; }
+            const newCat = { name, description: desc, icon, active: true, order: categories.length };
+            db.collection('config').doc('categories').set({
+                list: [...categories, newCat]
+            }).then(() => {
+                document.getElementById('new-cat-name').value = '';
+                document.getElementById('new-cat-desc').value = '';
+                document.getElementById('new-cat-icon').value = '';
+                showToast('✅ ক্যাটাগরি যুক্ত হয়েছে');
+            }).catch(err => showToast('❌ ' + err.message));
+        }
+
+        function deleteCategory(name) {
+            if (!confirm(`"${name}" ক্যাটাগরিটি মুছবেন?`)) return;
+            db.collection('config').doc('categories').set({
+                list: categories.filter(c => c.name !== name)
+            }).then(() => showToast('🗑️ মুছে ফেলা হয়েছে')).catch(err => showToast('❌ ' + err.message));
+        }
+
+        function renderAdminCategories() {
+            const container = document.getElementById('admin-cat-list');
+            if (!container) return;
+            container.innerHTML = categories.map(c => `
+                <span class="bg-gray-100 border px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 text-black font-bold mr-1 mb-1">
+                    ${c.icon || '🏷️'} ${c.name} ${c.active ? '✅' : '⛔'}
+                    <button onclick="deleteCategory('${c.name}')" class="text-red-500 font-bold hover:scale-110 transition">×</button>
+                </span>
+            `).join('');
+        }
+
+        function renderCategoryStats() {
+            const container = document.getElementById('category-stats-list');
+            if (!container) return;
+            const stats = {};
+            stories.forEach(s => {
+                const cats = getStoryCategories(s);
+                cats.forEach(c => { stats[c] = (stats[c] || 0) + 1; });
+            });
+            let html = '';
+            categories.forEach(c => {
+                const count = stats[c.name] || 0;
+                html +=
+                    `<div class="flex justify-between items-center p-2 border-b border-gray-100"><span class="text-sm font-medium text-gray-700">${c.icon || '🏷️'} ${c.name}</span><span class="text-sm font-bold text-blue-600">${count} টি গল্প</span></div>`;
+            });
+            container.innerHTML = html || '<p class="text-sm text-gray-400">কোনো ক্যাটাগরি নেই</p>';
+        }
+
+        function getStoryCategories(story) {
+            if (story.categories && Array.isArray(story.categories)) return story.categories;
+            if (story.category && typeof story.category === 'string') return [story.category];
+            return ['সাধারণ'];
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 11. STORIES — FETCH
+        // ════════════════════════════════════════════════════════════════
+        function resetPagination() {
+            currentPage = 1;
+            lastDoc = null;
+            allStoriesLoaded = false;
+            const sentinel = document.getElementById('sentinel');
+            if (sentinel) sentinel.innerHTML = '⬇️ স্ক্রল করে আরো গল্প দেখুন';
+        }
+
+        function fetchStories(page = 1, forceAscending = false) {
+            const list = document.getElementById('stories-list');
+            if (!list) return;
+            list.innerHTML = Array(2).fill(0).map(() => `
+                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                    <div class="h-36 bg-gray-200 rounded-lg w-full mb-3 skeleton"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/4 mb-3 skeleton"></div>
+                    <div class="h-6 bg-gray-200 rounded w-3/4 mb-2 skeleton"></div>
+                    <div class="h-4 bg-gray-200 rounded w-full skeleton"></div>
+                </div>
+            `).join('');
+
+            let query = db.collection('stories');
+            if (currentSearch) {
+                query = query.orderBy('title').startAt(currentSearch).endAt(currentSearch + '\uf8ff').limit(50);
+            } else if (currentCategory === 'TRENDING') {
+                query = query.orderBy('views', 'desc').limit(50);
+            } else {
+                query = query.orderBy('updatedAt', 'desc').limit(50);
+            }
+
+            query.get().then(snap => {
+                let baseStories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (currentSearch || currentCategory === 'TRENDING') allStoriesLoaded = true;
+                if (snap.docs.length < 50) allStoriesLoaded = true;
+
+                let filtered = baseStories.filter(s => s.status === 'Published');
+
+                if (currentCategory === 'FAVORITES') {
+                    const favs = getFavorites();
+                    filtered = filtered.filter(s => favs.includes(s.id));
+                    document.getElementById('hero-section').classList.add('hidden');
+                } else if (currentCategory === 'TRENDING') {
+                    document.getElementById('hero-section').classList.add('hidden');
+                } else if (currentCategory !== 'ALL' && currentCategory !== 'সব') {
+                    filtered = filtered.filter(s => getStoryCategories(s).includes(currentCategory));
+                    document.getElementById('hero-section').classList.add('hidden');
+                } else {
+                    if (!currentSearch) document.getElementById('hero-section').classList.remove('hidden');
+                }
+
+                if (currentCategory === 'TRENDING') {
+                    filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+                } else {
+                    filtered.sort((a, b) => (b.updatedAt?.seconds || 0) - (a.updatedAt?.seconds || 0));
+                }
+
+                if (filtered.length === 0) {
+                    list.innerHTML = '';
+                    document.getElementById('no-data-msg').classList.remove('hidden');
+                    document.getElementById('sentinel').classList.add('hidden');
+                    return;
+                }
+                document.getElementById('no-data-msg').classList.add('hidden');
+                document.getElementById('sentinel').classList.remove('hidden');
+
+                filtered.forEach(ps => { if (!stories.find(x => x.id === ps.id)) stories.push(ps); });
+                renderCategoryStats();
+
+                const favs = getFavorites();
+                list.innerHTML = filtered.map(s => `
+                    <div class="story-card bg-white rounded-2xl shadow-sm border border-gray-100 active:scale-[0.98] transition-all cursor-pointer overflow-hidden flex flex-col" onclick="openStory('${s.id}')">
+                        ${s.coverImage ? `<img src="${s.coverImage}" alt="cover" class="w-full h-40 md:h-48 object-cover bg-gray-50" loading="lazy" />` : ''}
+                        <div class="p-5 flex-1 flex flex-col">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex flex-wrap gap-1">
+                                    ${getStoryCategories(s).slice(0, 2).map(c => `<span class="cat-badge">${c}</span>`).join('')}
+                                    ${getStoryCategories(s).length > 2 ? `<span class="cat-badge">+${getStoryCategories(s).length - 2}</span>` : ''}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    ${s.featured ? '<span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⭐</span>' : ''}
+                                    ${!s.freeStory ? '<span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">🔓 Ad</span>' : ''}
+                                    <button onclick="toggleFavorite(event, '${s.id}')" class="text-lg hover:scale-110 transition">${favs.includes(s.id) ? '❤️' : '🤍'}</button>
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-lg leading-tight mb-1 text-gray-800">${s.title}</h3>
+                            <p class="text-gray-500 text-sm line-clamp-2 mb-2 leading-relaxed">${s.summary || s.content?.replace(/<[^>]*>?/gm, '').substring(0, 60) + '...' || ''}</p>
+                            <div class="flex items-center gap-3 text-xs text-gray-400 font-medium border-t pt-3 border-dashed mt-auto">
+                                <span>📝 ${s.author}</span>
+                                <span>👁️ ${s.views || 0}</span>
+                                <span>${s.updatedAt ? new Date(s.updatedAt.seconds * 1000).toLocaleDateString('bn-BD') : ''}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                updateHeroSection();
+                renderBanner('storyList');
+            }).catch(err => {
+                console.error(err);
+                showToast('❌ গল্প লোড করতে ব্যর্থ');
+                list.innerHTML = '<div class="text-center text-red-500 py-10">⚠️ গল্প লোড করতে ব্যর্থ। ইন্টারনেট চেক করুন।</div>';
+            });
+        }
+
+        function loadMoreStories() {
+            if (isLoading || allStoriesLoaded) return;
+            isLoading = true;
+            const sentinel = document.getElementById('sentinel');
+            if (sentinel) sentinel.innerHTML = '⏳ লোড হচ্ছে...';
+            db.collection('stories').orderBy('updatedAt', 'desc').limit(10).get()
+                .then(snap => {
+                    const newStories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (newStories.length === 0) {
+                        allStoriesLoaded = true;
+                        if (sentinel) sentinel.innerHTML = '🎉 সব গল্প দেখেছেন';
+                        isLoading = false;
+                        return;
+                    }
+                    newStories.forEach(s => { if (!stories.find(x => x.id === s.id)) stories.push(s); });
+                    const favs = getFavorites();
+                    const list = document.getElementById('stories-list');
+                    if (!list) { isLoading = false; return; }
+                    const html = newStories.filter(s => s.status === 'Published').map(s => `
+                        <div class="story-card bg-white rounded-2xl shadow-sm border border-gray-100 active:scale-[0.98] transition-all cursor-pointer overflow-hidden flex flex-col" onclick="openStory('${s.id}')">
+                            ${s.coverImage ? `<img src="${s.coverImage}" alt="cover" class="w-full h-40 md:h-48 object-cover bg-gray-50" loading="lazy" />` : ''}
+                            <div class="p-5 flex-1 flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="flex flex-wrap gap-1">
+                                        ${getStoryCategories(s).slice(0, 2).map(c => `<span class="cat-badge">${c}</span>`).join('')}
+                                        ${getStoryCategories(s).length > 2 ? `<span class="cat-badge">+${getStoryCategories(s).length - 2}</span>` : ''}
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        ${s.featured ? '<span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⭐</span>' : ''}
+                                        ${!s.freeStory ? '<span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">🔓 Ad</span>' : ''}
+                                        <button onclick="toggleFavorite(event, '${s.id}')" class="text-lg hover:scale-110 transition">${favs.includes(s.id) ? '❤️' : '🤍'}</button>
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-lg leading-tight mb-1 text-gray-800">${s.title}</h3>
+                                <p class="text-gray-500 text-sm line-clamp-2 mb-2 leading-relaxed">${s.summary || s.content?.replace(/<[^>]*>?/gm, '').substring(0, 60) + '...' || ''}</p>
+                                <div class="flex items-center gap-3 text-xs text-gray-400 font-medium border-t pt-3 border-dashed mt-auto">
+                                    <span>📝 ${s.author}</span>
+                                    <span>👁️ ${s.views || 0}</span>
+                                    <span>${s.updatedAt ? new Date(s.updatedAt.seconds * 1000).toLocaleDateString('bn-BD') : ''}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    list.insertAdjacentHTML('beforeend', html);
+                    if (snap.docs.length < 10) {
+                        allStoriesLoaded = true;
+                        if (sentinel) sentinel.innerHTML = '🎉 সব গল্প দেখেছেন';
+                    } else {
+                        if (sentinel) sentinel.innerHTML = '⬇️ স্ক্রল করে আরো গল্প দেখুন';
+                    }
+                    isLoading = false;
+                    renderCategoryStats();
+                })
+                .catch(err => { console.error(err);
+                    isLoading = false; });
+        }
+
+        function updateHeroSection() {
+            const hero = stories.filter(s => s.status === 'Published').sort((a, b) => (b.views || 0) - (a.views || 0))[0];
+            if (!hero) { document.getElementById('hero-section').classList.add('hidden'); return; }
+            document.getElementById('hero-title').innerText = hero.title;
+            document.getElementById('hero-author').innerText = hero.author;
+            document.getElementById('hero-views').innerText = hero.views || 0;
+            document.getElementById('hero-card').onclick = () => openStory(hero.id);
+            document.getElementById('hero-section').classList.remove('hidden');
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 12. SEARCH
+        // ════════════════════════════════════════════════════════════════
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.trim();
+            currentSearch = query;
+            resetPagination();
+            fetchStories(1, false);
+            showSuggestions(query);
+        }
+
+        function showSuggestions(query) {
+            const c = document.getElementById('search-suggestions');
+            if (!c) return;
+            if (!query || query.length < 1) { c.classList.add('hidden'); return; }
+            db.collection('stories').orderBy('title').startAt(query).endAt(query + '\uf8ff').limit(8).get()
+                .then(snap => {
+                    const results = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (results.length === 0) { c.classList.add('hidden'); return; }
+                    c.classList.remove('hidden');
+                    c.innerHTML = results.map(s =>
+                        `<div onclick="openStory('${s.id}'); document.getElementById('search-suggestions').classList.add('hidden');" class="p-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-50 text-sm"><span class="font-bold">${s.title}</span> — ${s.author}</div>`
+                    ).join('');
+                })
+                .catch(() => {});
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 13. OPEN STORY
+        // ════════════════════════════════════════════════════════════════
+        function openStory(id) {
+            let s = stories.find(x => x.id === id);
+            if (!s) {
+                db.collection('stories').doc(id).get()
+                    .then(doc => {
+                        if (doc.exists) { s = { id: doc.id, ...doc.data() };
+                            renderStory(s); } else showToast('❌ গল্প খুঁজে পাওয়া যায়নি');
+                    })
+                    .catch(() => showToast('❌ গল্প খুঁজে পাওয়া যায়নি'));
+                return;
+            }
+            renderStory(s);
+        }
+
+        function renderStory(s) {
+            // If not admin and not free story — show unlock overlay
+            if (!isAdmin && !s.freeStory && !s.adUnlockedForSession) {
+                currentStoryId = s.id;
+                showUnlockOverlay(s);
+                return;
+            }
+
+            currentStoryId = s.id;
+            document.getElementById('read-title').innerText = s.title;
+            document.getElementById('read-meta-author').innerText = s.author;
+            document.getElementById('read-meta-views').innerText = s.views || 0;
+            const cats = getStoryCategories(s);
+            document.getElementById('read-meta-cat').innerText = cats.join(', ') || 'সাধারণ';
+            document.getElementById('read-meta-date').innerText = s.updatedAt ? new Date(s.updatedAt.seconds * 1000)
+                .toLocaleDateString('bn-BD') : '';
+            document.getElementById('read-fav-btn').innerText = getFavorites().includes(s.id) ? '❤️' : '🤍';
+
+            // Tags
+            const tags = s.tags || [];
+            document.getElementById('read-meta-tags').innerHTML = tags.length ?
+                tags.map(t => `<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] mr-1">#${t}</span>`).join(
+                    '') : '';
+
+            // Cover + BG
+            const bg = document.getElementById('reading-bg');
+            const topCover = document.getElementById('read-top-cover');
+            if (s.coverImage) {
+                bg.style.backgroundImage = `url('${s.coverImage}')`;
+                bg.style.display = 'block';
+                topCover.src = s.coverImage;
+                topCover.classList.remove('hidden');
+            } else {
+                bg.style.backgroundImage = 'none';
+                topCover.classList.add('hidden');
+            }
+
+            // Summary
+            const summaryEl = document.getElementById('read-summary');
+            if (s.summary) { summaryEl.innerText = s.summary;
+                summaryEl.classList.remove('hidden'); } else { summaryEl.classList.add('hidden'); }
+
+            const contentEl = document.getElementById('read-content');
+            currentStoryFullContent = DOMPurify.sanitize(s.content || '');
+
+            // Ad unlock check
+            if (!isAdmin && !s.freeStory && s.adUnlockedForSession) {
+                contentEl.innerHTML = currentStoryFullContent;
+            } else if (isAdmin || s.freeStory) {
+                contentEl.innerHTML = currentStoryFullContent;
+            } else {
+                // Show preview + unlock button
+                const preview = currentStoryFullContent.substring(0, 600);
+                contentEl.innerHTML = preview + `
+                    <div id="unlock-container" class="mt-6 p-6 bg-white/90 border border-gray-200 rounded-2xl text-center shadow-sm relative z-20">
+                        <p class="text-sm text-gray-600 mb-4 font-bold">🔓 বাকি অংশ পড়তে Ad দেখুন</p>
+                        <button onclick="unlockFullStory('${s.id}')" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-xl font-bold shadow-md hover:scale-105 transition transform active:scale-95">📺 Ad দেখে পড়ুন</button>
+                        <p class="text-[10px] text-gray-400 mt-2">Ad দেখলে সম্পূর্ণ গল্প আনলক হবে</p>
+                    </div>
+                `;
+            }
+
+            // Related stories
+            db.collection('stories').where('status', '==', 'Published').limit(4).get()
+                .then(snap => {
+                    const related = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(st => st.id !== s.id)
+                        .slice(0, 3);
+                    const relEl = document.getElementById('related-stories');
+                    if (!relEl) return;
+                    relEl.innerHTML = related.length ? related.map(r => `
+                        <div class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 bg-white/80 backdrop-blur hover:bg-white transition cursor-pointer shadow-sm relative z-20" onclick="openStory('${r.id}')">
+                            ${r.coverImage ? `<img src="${r.coverImage}" class="w-12 h-12 object-cover rounded" />` : `<div class="w-12 h-12 rounded bg-blue-100 text-blue-500 flex items-center justify-center font-bold text-xs">📝</div>`}
+                            <div><h4 class="text-sm font-bold text-gray-800 line-clamp-1">${r.title}</h4><span class="text-[10px] text-gray-500">${r.author}</span></div>
+                        </div>
+                    `).join('') : '<p class="text-sm text-gray-400">আর কোনো গল্প নেই</p>';
+                })
+                .catch(() => {});
+
+            loadComments(s.id);
+            loadStoryReactionsUI(s);
+            document.getElementById('reading-progress').classList.remove('hidden');
+            document.getElementById('reading-screen').classList.remove('hidden');
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            window.scrollTo(0, 0);
+            renderBanner('storyReading');
+
+            // Increment view count (only once per session)
+            const viewedKey = 'viewed_' + s.id + '_' + (currentUser?.uid || 'anon');
+            if (!localStorage.getItem(viewedKey)) {
+                db.collection('stories').doc(s.id).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                }).catch(() => {});
+                localStorage.setItem(viewedKey, 'true');
+            }
+
+            addRecentlyRead(s.id, s.title);
+        }
+
+        // ─── UNLOCK OVERLAY ───
+        function showUnlockOverlay(s) {
+            // Simple inline unlock prompt
+            const overlay = document.createElement('div');
+            overlay.id = 'unlock-overlay-float';
+            overlay.className =
+                'fixed inset-0 z-[90] bg-black/80 backdrop-blur-md flex items-center justify-center p-6';
+            overlay.innerHTML = `
+                <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl slide-up">
+                    <div class="text-5xl mb-3">🔓</div>
+                    <h3 class="text-2xl font-black text-gray-800 mb-2">${s.title}</h3>
+                    <p class="text-sm text-gray-500 mb-6 leading-relaxed">এই গল্পটি সম্পূর্ণ পড়তে একটি Ad দেখতে হবে।</p>
+                    <button onclick="unlockFullStory('${s.id}')" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-500/20 transition transform active:scale-95">📺 Ad দেখে আনলক করুন</button>
+                    <button onclick="document.getElementById('unlock-overlay-float')?.remove()" class="mt-3 text-xs text-gray-400 font-bold block">পরে দেখব</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function unlockFullStory(storyId) {
+            // Check if ad zone is configured
+            const zoneId = appSettings.adZoneId || AD_SETTINGS.unlock?.zoneId || '';
+            const showAdFunc = zoneId ? window['show_' + zoneId] : null;
+
+            if (zoneId && typeof showAdFunc === 'function') {
+                try {
+                    showAdFunc().then(() => {
+                        // Ad completed — unlock
+                        const s = stories.find(x => x.id === storyId);
+                        if (s) s.adUnlockedForSession = true;
+                        document.getElementById('unlock-overlay-float')?.remove();
+                        // Re-render the story
+                        const full = stories.find(x => x.id === storyId);
+                        if (full) renderStory(full);
+                        else openStory(storyId);
+                        showToast('🎉 গল্প আনলক হয়েছে!');
+                    }).catch(() => {
+                        showToast('⚠️ Ad দেখাতে সমস্যা, আবার চেষ্টা করুন');
+                    });
+                } catch (e) {
+                    showToast('⚠️ Ad দেখাতে সমস্যা');
+                }
+            } else {
+                // Fallback: if no ad, just unlock for admin or show message
+                if (isAdmin) {
+                    const s = stories.find(x => x.id === storyId);
+                    if (s) s.adUnlockedForSession = true;
+                    document.getElementById('unlock-overlay-float')?.remove();
+                    if (s) renderStory(s);
+                    else openStory(storyId);
+                } else {
+                    showToast('⚠️ Ad বর্তমানে কনফিগার করা নেই');
+                }
+            }
+        }
+
+        // ─── CLOSE READING ───
+        function closeReadingScreen() {
+            document.getElementById('reading-screen').classList.add('hidden');
+            document.getElementById('reading-progress').classList.add('hidden');
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            document.getElementById('reading-bg').style.display = 'none';
+            if (window.speechSynthesis && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+            if (activeTab === 'home' || activeTab === 'favorites') {
+                document.getElementById('home-screen').classList.remove('hidden');
+                checkReadingHistory();
+            } else if (activeTab === 'profile') {
+                document.getElementById('profile-screen').classList.remove('hidden');
+            }
+            // Remove unlock overlay if present
+            document.getElementById('unlock-overlay-float')?.remove();
+            currentStoryId = null;
+            if (commentUnsubscribe) { commentUnsubscribe();
+                commentUnsubscribe = null; }
+        }
+
+        function changeFontSize(action) {
+            currentFontSize = action === 'increase' ? Math.min(currentFontSize + 2, 30) : Math.max(currentFontSize - 2, 14);
+            const content = document.getElementById('read-content');
+            if (content) {
+                content.style.fontSize = currentFontSize + 'px';
+                content.style.lineHeight = (currentFontSize * 1.6) + 'px';
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 14. COMMENTS
+        // ════════════════════════════════════════════════════════════════
+        function loadComments(storyId) {
+            const display = document.getElementById('comments-display');
+            if (!display) return;
+            display.innerHTML = '<div class="loader mx-auto"></div>';
+            if (commentUnsubscribe) commentUnsubscribe();
+            commentUnsubscribe = db.collection('stories').doc(storyId).collection('comments').orderBy('createdAt', 'desc')
+                .onSnapshot(snap => {
+                    if (!display) return;
+                    display.innerHTML = '';
+                    const coms = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    const filtered = coms.filter(c => c.approved || isAdmin || !appSettings.commentsModerated);
+                    if (filtered.length === 0) {
+                        display.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">কোনো মন্তব্য নেই</p>';
+                        return;
+                    }
+                    display.innerHTML = filtered.map(c => `
+                        <div class="bg-gray-50/50 p-3 rounded-xl border border-gray-100 relative">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">@${c.userName || 'Anonymous'}</span>
+                                <span class="text-[9px] text-gray-400">${c.createdAt ? new Date(c.createdAt.seconds * 1000).toLocaleDateString('bn-BD') : 'এখনই'}</span>
+                            </div>
+                            <p class="text-xs text-gray-600 leading-normal">${c.text}</p>
+                            ${isAdmin ? '<button onclick="deleteComment(\'' + storyId + '\', \'' + c.id + '\')" class="absolute top-2.5 right-2.5 text-red-500 font-bold text-xs hover:scale-110 transition">🗑️</button>' : ''}
+                        </div>
+                    `).join('');
+                }, err => { if (display) display.innerHTML =
+                    '<p class="text-xs text-red-400 text-center py-4">মন্তব্য লোড করা যায়নি</p>'; });
+        }
+
+        function postComment() {
+            if (!currentStoryId) return;
+            const input = document.getElementById('comment-input');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+            if (!currentUser) { showToast('⚠️ মন্তব্য করতে লগইন করুন'); return; }
+            input.disabled = true;
+            input.placeholder = 'পাঠানো হচ্ছে...';
+            const name = currentUser.displayName || 'Anonymous';
+            const isModerated = appSettings.commentsModerated || false;
+            db.collection('stories').doc(currentStoryId).collection('comments').add({
+                text,
+                uid: currentUser.uid,
+                userName: name,
+                approved: !isModerated,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                db.collection('users').doc(currentUser.uid).set({ commentsCount: firebase.firestore.FieldValue
+                        .increment(1) }, { merge: true });
+                input.value = '';
+                showToast(isModerated ? '📢 মন্তব্য রিভিউয়ের জন্য জমা হয়েছে' : '✅ মন্তব্য পোস্ট হয়েছে');
+                input.disabled = false;
+                input.placeholder = 'মন্তব্য লিখুন...';
+            }).catch(err => { showToast('❌ ' + err.message);
+                input.disabled = false;
+                input.placeholder = 'মন্তব্য লিখুন...'; });
+        }
+
+        function deleteComment(storyId, commentId) {
+            if (!confirm('কমেন্টটি ডিলিট করতে চান?')) return;
+            db.collection('stories').doc(storyId).collection('comments').doc(commentId).delete()
+                .then(() => showToast('🗑️ কমেন্ট ডিলিট'))
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function openAdminComments(storyId, storyTitle) {
+            document.getElementById('acm-title').innerText = storyTitle;
+            const list = document.getElementById('acm-list');
+            if (!list) return;
+            list.innerHTML = '<div class="loader mx-auto"></div>';
+            document.getElementById('admin-comment-modal').classList.remove('hidden');
+            db.collection('stories').doc(storyId).collection('comments').orderBy('createdAt', 'desc').get()
+                .then(snap => {
+                    const comments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (comments.length === 0) {
+                        list.innerHTML = '<p class="text-xs text-gray-400 text-center py-8">📂 কোনো কমেন্ট নেই</p>';
+                        return;
+                    }
+                    list.innerHTML = comments.map(c => `
+                        <div class="bg-white p-3 rounded-xl border shadow-sm relative flex justify-between items-start gap-4">
+                            <div>
+                                <span class="text-xs font-bold text-gray-700">@${c.userName || 'Anonymous'}</span>
+                                <p class="text-xs text-gray-600 mt-1 leading-normal">${c.text}</p>
+                                <span class="text-[9px] text-gray-400 block mt-1">${c.createdAt ? new Date(c.createdAt.seconds * 1000).toLocaleString('bn-BD') : 'N/A'}</span>
+                            </div>
+                            <button onclick="deleteComment('${storyId}', '${c.id}'); openAdminComments('${storyId}', '${storyTitle}');" class="text-red-500 font-bold text-xs hover:scale-110 transition bg-red-50 hover:bg-red-100 p-2 rounded-xl">🗑️</button>
+                        </div>
+                    `).join('');
+                })
+                .catch(err => list.innerHTML = '<p class="text-xs text-red-500 text-center">Error: ' + err.message +
+                '</p>');
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 15. REACTIONS
+        // ════════════════════════════════════════════════════════════════
+        function submitStoryReaction(type) {
+            if (!currentStoryId) return;
+            const key = 'reacted_' + currentStoryId + '_' + type;
+            if (localStorage.getItem(key)) { showToast('⚠️ ইতিমধ্যে রিঅ্যাকশন দিয়েছেন'); return; }
+            const inc = {};
+            inc[type] = firebase.firestore.FieldValue.increment(1);
+            db.collection('stories').doc(currentStoryId).update(inc)
+                .then(() => {
+                    localStorage.setItem(key, 'true');
+                    showToast('💖 ধন্যবাদ!');
+                    const el = document.getElementById('react-' + type + '-count');
+                    if (el) el.innerText = parseInt(el.innerText) + 1;
+                })
+                .catch(err => console.error(err));
+        }
+
+        function loadStoryReactionsUI(data) {
+            document.getElementById('react-likes-count').innerText = data.likes || 0;
+            document.getElementById('react-loves-count').innerText = data.loves || 0;
+            document.getElementById('react-fires-count').innerText = data.fires || 0;
+            document.getElementById('react-wows-count').innerText = data.wows || 0;
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 16. SHARE
+        // ════════════════════════════════════════════════════════════════
+        function getStoryShareLink() {
+            return 'https://t.me/Bangalchotigolpo_bot/bcg?startapp=' + currentStoryId;
+        }
+
+        function copyStoryLink() {
+            const link = getStoryShareLink();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link).then(() => {
+                    showToast('📋 লিংক কপি হয়েছে!');
+                    document.getElementById('share-modal').classList.add('hidden');
+                });
+            } else {
+                fallbackCopy(link);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy');
+                showToast('📋 লিংক কপি হয়েছে');
+                document.getElementById('share-modal').classList.add('hidden'); } catch (e) { showToast('❌ কপি করা যায়নি'); }
+            document.body.removeChild(ta);
+        }
+
+        function shareViaTelegram() {
+            const title = document.getElementById('read-title').innerText;
+            const link = getStoryShareLink();
+            const text = '🔥 পড়ছি: "' + title + '"\n\nসেরা বাংলা চটি গল্প পড়তে ভিজিট করুন 👇';
+            const shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text);
+            if (window.Telegram?.WebApp?.openTelegramLink) {
+                window.Telegram.WebApp.openTelegramLink(shareUrl);
+            } else {
+                window.open(shareUrl, '_blank');
+            }
+            document.getElementById('share-modal').classList.add('hidden');
+            showToast('📤 শেয়ার করুন!');
+        }
+
+        function showShareModal() {
+            document.getElementById('share-modal').classList.remove('hidden');
+            document.getElementById('share-card-title').innerText = document.getElementById('read-title').innerText;
+            document.getElementById('share-card-author').innerText = document.getElementById('read-meta-author').innerText;
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 17. SOCIAL LINKS
+        // ════════════════════════════════════════════════════════════════
+        function renderSocialJoinButtons() {
+            const container = document.getElementById('user-profile-links');
+            if (!container) return;
+            const links = [
+                { type: 'tg_channel', name: '✈️ চ্যানেল', url: socialMainLinks.tgChannel },
+                { type: 'tg_group', name: '💬 গ্রুপ', url: socialMainLinks.tgChat },
+                { type: 'fb_page', name: '📘 পেজ', url: socialMainLinks.fbPage },
+                { type: 'fb_group', name: '👥 গ্রুপ', url: socialMainLinks.fbGroup }
+            ];
+            let html = '';
+            links.forEach(l => {
+                if (l.url) {
+                    html +=
+                        `<button onclick="window.Telegram?.WebApp?.openLink('${l.url}') || window.open('${l.url}')" class="bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold social-link-btn px-4 py-2 rounded-xl text-sm border border-blue-200 transition">${l.name}</button>`;
+                }
+            });
+            customSocialLinks.forEach(cl => {
+                html +=
+                    `<button onclick="window.Telegram?.WebApp?.openLink('${cl.url}') || window.open('${cl.url}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold social-link-btn px-4 py-2 rounded-xl text-sm border border-indigo-200 transition">🔗 ${cl.name}</button>`;
+            });
+            container.innerHTML = html || '<p class="text-gray-400 text-sm">কোনো লিংক কনফিগার করা হয়নি</p>';
+        }
+
+        function renderUserProfileSocialLinks() {
+            renderSocialJoinButtons();
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 18. NOTIFICATIONS
+        // ════════════════════════════════════════════════════════════════
+        function toggleNotifications() {
+            const panel = document.getElementById('notif-panel');
+            if (!panel) return;
+            panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) {
+                localStorage.setItem('lastNotifSeen', Math.floor(Date.now() / 1000));
+                document.getElementById('notif-dot').classList.add('hidden');
+                renderNotifications();
+            }
+        }
+
+        function renderNotifications() {
+            const list = document.getElementById('notif-list');
+            if (!list) return;
+            if (notifications.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-400 text-sm py-6">কোনো নোটিফিকেশন নেই</p>';
+                return;
+            }
+            list.innerHTML = notifications.map(n => `
+                <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                    <h4 class="font-bold text-sm text-gray-800">${n.title || 'নতুন আপডেট'}</h4>
+                    <p class="text-xs text-gray-600 mt-1">${n.body}</p>
+                    <span class="text-[9px] text-gray-400 block mt-1">${n.timestamp ? new Date(n.timestamp.seconds * 1000).toLocaleString('bn-BD') : ''}</span>
+                </div>
+            `).join('');
+        }
+
+        function sendNotification() {
+            const title = document.getElementById('notif-title-input').value.trim();
+            const body = document.getElementById('notif-body-input').value.trim();
+            if (!title && !body) { showToast('⚠️ টাইটেল বা বার্তা লিখুন'); return; }
+            db.collection('notifications').add({
+                title: title || 'নতুন আপডেট',
+                body: body,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                showToast('✅ নোটিফিকেশন পাঠানো হয়েছে');
+                document.getElementById('notif-title-input').value = '';
+                document.getElementById('notif-body-input').value = '';
+            }).catch(err => showToast('❌ ' + err.message));
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 19. GUIDELINES
+        // ════════════════════════════════════════════════════════════════
+        function openGuidelinesPage() {
+            document.getElementById('guidelines-page').classList.remove('hidden');
+            renderGuidelinesPage();
+        }
+
+        function closeGuidelinesPage() {
+            document.getElementById('guidelines-page').classList.add('hidden');
+        }
+
+        function renderGuidelinesPage() {
+            const container = document.getElementById('guidelines-content');
+            if (!container) return;
+            loadGuidelines().then(data => {
+                container.innerHTML = `
+                    <div class="section-box bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 p-5 rounded-xl">
+                        <h2 class="text-xl font-bold text-gray-800">📖 স্বাগতম</h2>
+                        <p class="text-sm text-gray-600 mt-2">${data.welcome || 'স্বাগতম বাংলা চটি গল্প অ্যাপে।'}</p>
+                        <div class="mt-3 bg-red-50 p-3 rounded-xl border-2 border-dashed border-red-200">
+                            <h4 class="font-black text-sm text-red-700">🔞 Strictly 18+</h4>
+                            <p class="text-xs text-red-600">এই অ্যাপ শুধুমাত্র ১৮+ ব্যবহারকারীদের জন্য।</p>
+                        </div>
+                    </div>
+                    <div class="section-box bg-white p-5 rounded-xl border">${data.story_system || ''}</div>
+                    <div class="section-box bg-white p-5 rounded-xl border">${data.share_referral || ''}</div>
+                    <div class="section-box bg-white p-5 rounded-xl border">${data.privacy || ''}</div>
+                    <div class="text-center">
+                        <button onclick="closeGuidelinesPage()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold shadow-md hover:bg-blue-700 transition">ঠিক আছে, বুঝেছি</button>
+                    </div>
+                `;
+            });
+        }
+
+        function loadGuidelines() {
+            return db.collection('config').doc('guidelines').get()
+                .then(doc => {
+                    if (doc.exists) return doc.data();
+                    const defaults = {
+                        welcome: 'স্বাগতম বাংলা চটি গল্প অ্যাপে। এখানে পাবেন সব সেরা গল্পের ভাণ্ডার।',
+                        story_system: '<h3 class="font-bold text-lg">📖 গল্প সিস্টেম</h3><ul class="list-disc pl-5 space-y-1 text-sm"><li>ফ্রি গল্প — সরাসরি পড়ুন</li><li>Ad Unlock গল্প — Ad দেখে পড়ুন</li><li>ফেভারিট, কমেন্ট, শেয়ার করুন</li></ul>',
+                        share_referral: '<h3 class="font-bold text-lg">🔗 শেয়ার</h3><ul class="list-disc pl-5 space-y-1 text-sm"><li>Telegram-এ শেয়ার করুন</li><li>লিংক কপি করে শেয়ার করুন</li></ul>',
+                        privacy: '<h3 class="font-bold text-lg">🔒 প্রাইভেসি</h3><p class="text-sm text-gray-600">আপনার ডেটা নিরাপদ।</p>'
+                    };
+                    return db.collection('config').doc('guidelines').set(defaults).then(() => defaults);
+                })
+                .catch(() => ({}));
+        }
+
+        function loadGuidelinesForAdmin() {
+            db.collection('config').doc('guidelines').get()
+                .then(doc => {
+                    const data = doc.exists ? doc.data() : {};
+                    document.getElementById('guidelines-welcome').value = data.welcome || '';
+                    document.getElementById('guidelines-story').value = data.story_system || '';
+                    document.getElementById('guidelines-share').value = data.share_referral || '';
+                    document.getElementById('guidelines-privacy').value = data.privacy || '';
+                })
+                .catch(err => console.error(err));
+        }
+
+        function updateGuidelines() {
+            const data = {
+                welcome: document.getElementById('guidelines-welcome').value,
+                story_system: document.getElementById('guidelines-story').value,
+                share_referral: document.getElementById('guidelines-share').value,
+                privacy: document.getElementById('guidelines-privacy').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            db.collection('config').doc('guidelines').set(data, { merge: true })
+                .then(() => showToast('✅ নির্দেশিকা আপডেট হয়েছে'))
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 20. ENTER APP
+        // ════════════════════════════════════════════════════════════════
+        window.enterApp = function() {
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('guidelines-popup').classList.remove('hidden');
+            loadGuidelines().then(data => {
+                document.getElementById('guidelines-popup-welcome').innerHTML = data.welcome ||
+                    'স্বাগতম বাংলা চটি গল্প অ্যাপে।';
+            });
+        };
+
+        window.handleGuidelinesClose = function() {
+            document.getElementById('guidelines-popup').classList.add('hidden');
+            checkReadingHistory();
+            if (currentUser) renderSocialJoinButtons();
+        };
+
+        function acceptAgeGate() {
+            localStorage.setItem('age_verified', 'true');
+            document.getElementById('age-gate').classList.add('hidden');
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 21. ADMIN — STORY FORM
+        // ════════════════════════════════════════════════════════════════
+        function initQuill() {
+            if (!quillEditor) {
+                quillEditor = new Quill('#quill-editor-container', {
+                    theme: 'snow',
+                    placeholder: 'গল্প লেখা শুরু করুন...',
+                    modules: { toolbar: [
+                            ['bold', 'italic', 'underline'],
+                            [{ 'header': [1, 2, false] }],
+                            ['clean']
+                        ] }
+                });
+            }
+            // Update category selector
+            renderCategoriesUI();
+            // Free/Ad toggle
+            const freeCheck = document.getElementById('story-free');
+            const adSection = document.getElementById('ad-unlock-section');
+            if (freeCheck && adSection) {
+                freeCheck.addEventListener('change', function() {
+                    adSection.classList.toggle('hidden', this.checked);
+                });
+                adSection.classList.toggle('hidden', freeCheck.checked);
+            }
+        }
+
+        document.getElementById('story-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('story-submit-btn');
+            const orig = btn.innerText;
+            const content = quillEditor ? quillEditor.root.innerHTML : '';
+            if (content.replace(/<[^>]*>?/gm, '').trim().length === 0) { showToast('গল্পের টেক্সট ফাঁকা!'); return; }
+
+            btn.innerText = 'আপলোড হচ্ছে...';
+            btn.disabled = true;
+
+            const id = document.getElementById('edit-id').value;
+            const title = document.getElementById('story-title').value.trim();
+            const author = document.getElementById('story-author').value.trim();
+            const cover = document.getElementById('story-cover').value.trim();
+            const summary = document.getElementById('story-summary').value.trim();
+            const status = document.getElementById('story-status').value;
+            const featured = document.getElementById('story-featured').checked;
+            const freeStory = document.getElementById('story-free').checked;
+            const adZone = document.getElementById('story-ad-zone').value.trim();
+            const tagsRaw = document.getElementById('story-tags').value.trim();
+            const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+            // Get selected categories
+            const checkboxes = document.querySelectorAll('#multi-category-selector .cat-checkbox:checked');
+            const categories = Array.from(checkboxes).map(el => el.value);
+
+            const data = {
+                title,
+                author,
+                categories: categories.length ? categories : ['সাধারণ'],
+                summary,
+                content,
+                coverImage: cover,
+                status,
+                featured,
+                freeStory,
+                adUnlockEnabled: !freeStory,
+                adZoneId: adZone,
+                tags,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            let promise;
+            if (!id) {
+                data.views = 0;
+                data.likes = 0;
+                data.loves = 0;
+                data.fires = 0;
+                data.wows = 0;
+                promise = db.collection('stories').add(data);
+            } else {
+                promise = db.collection('stories').doc(id).update(data);
+            }
+
+            promise.then(() => {
+                if (!id && isAdmin) {
+                    db.collection('update_logs').add({
+                        type: 'story_added',
+                        message: '📖 নতুন গল্প: "' + title + '"',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        seen: false
+                    });
+                }
+                resetForm();
+                showToast('✅ গল্প সেভ হয়েছে!');
+                showScreen('home-screen');
+                resetPagination();
+                fetchStories(1, false);
+                btn.innerText = orig;
+                btn.disabled = false;
+            }).catch(err => { showToast('❌ ' + err.message);
+                btn.innerText = orig;
+                btn.disabled = false; });
+        });
+
+        function resetForm() {
+            document.getElementById('story-form').reset();
+            document.getElementById('edit-id').value = '';
+            if (quillEditor) quillEditor.root.innerHTML = '';
+            document.getElementById('form-mode-title').innerText = '📝 গল্প লিখুন';
+            document.getElementById('story-free').checked = true;
+            document.getElementById('ad-unlock-section').classList.add('hidden');
+            document.getElementById('story-tags').value = '';
+            // Uncheck all category checkboxes
+            document.querySelectorAll('#multi-category-selector .cat-checkbox').forEach(el => el.checked = false);
+        }
+
+        function editStory(id) {
+            const s = stories.find(x => x.id === id);
+            if (!s) { showToast('❌ গল্পটি পাওয়া যায়নি'); return; }
+            document.getElementById('edit-id').value = s.id;
+            document.getElementById('story-title').value = s.title;
+            document.getElementById('story-author').value = s.author;
+            document.getElementById('story-cover').value = s.coverImage || '';
+            document.getElementById('story-summary').value = s.summary || '';
+            document.getElementById('story-status').value = s.status || 'Published';
+            document.getElementById('story-featured').checked = s.featured || false;
+            document.getElementById('story-free').checked = s.freeStory !== false;
+            document.getElementById('story-ad-zone').value = s.adZoneId || '';
+            document.getElementById('story-tags').value = (s.tags || []).join(', ');
+            document.getElementById('ad-unlock-section').classList.toggle('hidden', s.freeStory !== false);
+
+            if (quillEditor) quillEditor.root.innerHTML = s.content || '';
+            document.getElementById('form-mode-title').innerText = '📝 গল্প এডিট করুন';
+
+            // Select categories
+            const cats = getStoryCategories(s);
+            document.querySelectorAll('#multi-category-selector .cat-checkbox').forEach(el => {
+                el.checked = cats.includes(el.value);
+            });
+
+            selectAdminTab('admin-tab-write');
+        }
+
+        function deleteStory(id) {
+            if (!confirm('গল্পটি মুছে ফেলতে চান?')) return;
+            db.collection('stories').doc(id).delete()
+                .then(() => {
+                    showToast('🗑️ গল্প মুছে ফেলা হয়েছে');
+                    stories = stories.filter(s => s.id !== id);
+                    renderAdminListUI();
+                    fetchStories(1, false);
+                })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        // ─── ADMIN STORY LIST ───
+        function renderAdminListUI() {
+            const container = document.getElementById('admin-story-list');
+            if (!container) return;
+            const q = document.getElementById('admin-search-input').value.trim().toLowerCase();
+            let list = q ? stories.filter(s => s.title.toLowerCase().includes(q) || s.author.toLowerCase().includes(q)) :
+            stories;
+            container.innerHTML = list.map(s => `
+                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+                    <div class="flex items-center gap-3">
+                        ${s.coverImage ? '<img src="' + s.coverImage + '" class="w-12 h-12 object-cover rounded-xl border" />' : '<div class="w-12 h-12 bg-blue-50 border rounded-xl flex items-center justify-center font-bold text-blue-500 text-xs">📖</div>'}
+                        <div>
+                            <h4 class="font-bold text-sm text-gray-800">${s.title}</h4>
+                            <span class="text-[10px] text-gray-500 font-bold block">${s.status} • ভিউ: ${s.views || 0}</span>
+                            <div class="flex flex-wrap gap-1 mt-0.5">
+                                ${getStoryCategories(s).map(c => `<span class="cat-badge text-[8px]">${c}</span>`).join('')}
+                                ${s.featured ? '<span class="text-[9px] font-bold text-amber-600">⭐</span>' : ''}
+                                ${!s.freeStory ? '<span class="text-[9px] font-bold text-amber-600">🔓 Ad</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="openAdminComments('${s.id}', '${s.title}')" class="bg-indigo-50 text-indigo-700 w-7 h-7 rounded-full flex items-center justify-center text-xs">💬</button>
+                        <button onclick="editStory('${s.id}')" class="bg-blue-50 text-blue-600 text-[10px] px-3 py-1 rounded">Edit</button>
+                        <button onclick="deleteStory('${s.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1 rounded">Del</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleAdminStorySearch() { renderAdminListUI(); }
+
+        // ════════════════════════════════════════════════════════════════
+        // 22. ADMIN — COMMENTS MODERATION
+        // ════════════════════════════════════════════════════════════════
+        function updateCommentsModSettings() {
+            const val = document.getElementById('set-comments-mod-toggle').value === 'true';
+            db.collection('config').doc('app_settings').set({ commentsModerated: val }, { merge: true })
+                .then(() => showToast('✅ কমেন্ট মডারেশন আপডেট হয়েছে'))
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function approvePendingComment(storyId, commentId) {
+            db.collection('stories').doc(storyId).collection('comments').doc(commentId).update({ approved: true })
+                .then(() => { showToast('✅ কমেন্ট এপ্রুভ করা হয়েছে');
+                    renderAdminCommentsModerationUI(); })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function renderAdminCommentsModerationUI() {
+            const container = document.getElementById('admin-comments-moderation-list');
+            if (!container) return;
+            container.innerHTML = '<div class="loader mx-auto"></div>';
+            const pending = [];
+            db.collection('stories').get()
+                .then(snap => {
+                    const promises = snap.docs.map(doc => {
+                        return doc.ref.collection('comments').where('approved', '==', false).get()
+                            .then(cs => {
+                                cs.docs.forEach(c => {
+                                    pending.push({ id: c.id, storyId: doc.id, storyTitle: doc
+                                            .data().title, ...c.data() });
+                                });
+                            });
+                    });
+                    return Promise.all(promises);
+                })
+                .then(() => {
+                    if (pending.length === 0) {
+                        container.innerHTML =
+                            '<p class="text-center py-8 text-xs text-gray-400 font-bold">📂 কোনো পেন্ডিং কমেন্ট নেই</p>';
+                        return;
+                    }
+                    container.innerHTML = pending.map(c => `
+                        <div class="bg-white p-4 rounded-xl border shadow-sm space-y-2">
+                            <span class="text-[9px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded uppercase font-bold">${c.storyTitle}</span>
+                            <p class="text-xs text-gray-700">${c.text}</p>
+                            <div class="flex justify-between items-center text-[10px] text-gray-400">
+                                <span>@${c.userName || 'Anonymous'}</span>
+                                <div class="flex gap-2">
+                                    <button onclick="approvePendingComment('${c.storyId}', '${c.id}')" class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg font-bold">✅ Approve</button>
+                                    <button onclick="deleteComment('${c.storyId}', '${c.id}'); setTimeout(renderAdminCommentsModerationUI, 1000);" class="bg-red-50 text-red-600 px-3 py-1 rounded-lg font-bold">🗑️ Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                })
+                .catch(err => container.innerHTML = '<p class="text-center text-xs text-red-500 font-bold">Error: ' + err
+                    .message + '</p>');
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 23. ADMIN — ADS MANAGEMENT
+        // ════════════════════════════════════════════════════════════════
+        function renderAdsManagementUI() {
+            const container = document.getElementById('ads-management-container');
+            if (!container) return;
+            const adTypes = [
+                { key: 'home', label: '🏠 হোম ব্যানার', desc: 'হোম পেজের উপরে' },
+                { key: 'storyList', label: '📋 গল্প তালিকা ব্যানার', desc: 'গল্প লিস্টের মাঝে' },
+                { key: 'storyReading', label: '📖 পড়ার পেজ ব্যানার', desc: 'গল্প পড়ার পৃষ্ঠায়' },
+                { key: 'profile', label: '👤 প্রোফাইল ব্যানার', desc: 'প্রোফাইল পৃষ্ঠায়' },
+                { key: 'interstitial', label: '🔄 ইন্টারস্টিশিয়াল', desc: 'পৃষ্ঠা পরিবর্তনের সময়' },
+                { key: 'unlock', label: '🔓 আনলক অ্যাড', desc: 'গল্প আনলক করতে' },
+                { key: 'popunder', label: '📌 পপআন্ডার', desc: 'পিছনে খোলা' }
+            ];
+            let html = '';
+            adTypes.forEach(ad => {
+                const settings = AD_SETTINGS[ad.key] || { enabled: false, zoneId: '' };
+                html += `
+                    <div class="admin-card">
+                        <div class="admin-card-title">${ad.label}</div>
+                        <p class="text-xs text-gray-500 mb-3">${ad.desc}</p>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div><label class="text-[10px] font-bold text-gray-500 block mb-1">স্ট্যাটাস</label>
+                                <select class="ad-status-select w-full p-1.5 border rounded text-xs bg-white text-black" data-key="${ad.key}">
+                                    <option value="true" ${settings.enabled ? 'selected' : ''}>✅ চালু</option>
+                                    <option value="false" ${!settings.enabled ? 'selected' : ''}>❌ বন্ধ</option>
+                                </select>
+                            </div>
+                            <div><label class="text-[10px] font-bold text-gray-500 block mb-1">Zone ID</label>
+                                <input type="text" class="ad-zone-input w-full p-1.5 border rounded text-xs text-black" data-key="${ad.key}" value="${settings.zoneId || ''}" placeholder="Zone ID" />
+                            </div>
+                            <div><label class="text-[10px] font-bold text-gray-500 block mb-1">প্রিভিউ</label>
+                                <div class="banner-preview text-[10px]">${settings.enabled ? '📢 সক্রিয়' : '⛔ নিষ্ক্রিয়'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function saveAllAdSettings() {
+            const selects = document.querySelectorAll('.ad-status-select');
+            const inputs = document.querySelectorAll('.ad-zone-input');
+            const newSettings = { ...AD_SETTINGS };
+            selects.forEach(sel => {
+                const key = sel.dataset.key;
+                if (newSettings[key]) newSettings[key].enabled = sel.value === 'true';
+            });
+            inputs.forEach(inp => {
+                const key = inp.dataset.key;
+                if (newSettings[key]) newSettings[key].zoneId = inp.value.trim();
+            });
+            db.collection('config').doc('ad_settings').set(newSettings, { merge: true })
+                .then(() => { AD_SETTINGS = newSettings;
+                    showToast('✅ সব এড সেটিংস সেভ হয়েছে'); })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 24. ADMIN — BANNER RENDERER
+        // ════════════════════════════════════════════════════════════════
+        function renderBanner(position) {
+            const map = {
+                home: 'banner-home',
+                storyList: 'banner-story-list',
+                storyReading: 'banner-story-reading',
+                profile: 'banner-profile'
+            };
+            const container = document.getElementById(map[position]);
+            if (!container) return;
+            const settings = AD_SETTINGS[position];
+            if (!settings || !settings.enabled || !settings.zoneId) {
+                container.classList.add('hidden');
+                return;
+            }
+            container.classList.remove('hidden');
+            container.innerHTML = `
+                <div class="banner-ad-container">
+                    <div id="banner-${position}-zone" data-zone="${settings.zoneId}">
+                        <span class="text-xs text-gray-400">📢 ${position} ব্যানার</span>
+                        <div style="min-height:50px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#94a3b8;">
+                            Zone: ${settings.zoneId}
+                        </div>
+                    </div>
+                </div>
+            `;
+            const zoneId = settings.zoneId;
+            const showAdFunc = zoneId ? window['show_' + zoneId] : null;
+            if (typeof showAdFunc === 'function') {
+                try { showAdFunc().catch(() => {}); } catch (e) {}
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 25. ADMIN — DASHBOARD
+        // ════════════════════════════════════════════════════════════════
+        function renderAdminDashboard() {
+            db.collection('stories').get()
+                .then(snap => {
+                    let totalViews = 0,
+                        draftCount = 0;
+                    snap.docs.forEach(d => {
+                        totalViews += d.data().views || 0;
+                        if (d.data().status === 'Draft') draftCount++;
+                    });
+                    document.getElementById('dash-total-stories').innerText = snap.size;
+                    document.getElementById('dash-total-views').innerText = totalViews;
+                    document.getElementById('dash-draft-stories').innerText = draftCount;
+                    document.getElementById('dash-total-categories').innerText = categories.length;
+                    // Comments count
+                    return db.collectionGroup('comments').get();
+                })
+                .then(snap => {
+                    document.getElementById('dash-total-comments').innerText = snap.size;
+                })
+                .catch(err => console.error(err));
+        }
+
+        function exportStoryDatabaseJSON() {
+            showToast('⏳ ডাটা জেনারেট হচ্ছে...');
+            db.collection('stories').get()
+                .then(snap => {
+                    const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    const json = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null,
+                    2));
+                    const a = document.createElement('a');
+                    a.setAttribute('href', json);
+                    a.setAttribute('download', 'BCG_Stories_Backup_' + new Date().toISOString().split('T')[0] +
+                        '.json');
+                    a.click();
+                    showToast('✅ ব্যাকআপ ডাউনলোড সম্পন্ন');
+                })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 26. ADMIN — SETTINGS
+        // ════════════════════════════════════════════════════════════════
+        function loadSettingsForAdmin() {
+            db.collection('config').doc('app_settings').get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        document.getElementById('set-app-name').value = data.name || '';
+                        document.getElementById('set-ad-zone').value = data.adZoneId || '';
+                        document.getElementById('set-ads-toggle').value = data.adsEnabled ? 'true' : 'false';
+                        document.getElementById('set-adblock-toggle').value = data.adBlockerEnabled ? 'true' :
+                            'false';
+                        document.getElementById('set-comments-mod-toggle').value = data.commentsModerated ?
+                            'true' : 'false';
+                    }
+                })
+                .catch(err => console.error(err));
+            db.collection('config').doc('social_links').get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        document.getElementById('set-link-tg-chan').value = data.tgChannel || '';
+                        document.getElementById('set-link-tg-chat').value = data.tgChat || '';
+                        document.getElementById('set-link-fb-page').value = data.fbPage || '';
+                        document.getElementById('set-link-fb-group').value = data.fbGroup || '';
+                        customSocialLinks = data.customLinks || [];
+                    }
+                })
+                .catch(err => console.error(err));
+            loadRemoteConfigForAdmin();
+        }
+
+        function updateSettings() {
+            const name = document.getElementById('set-app-name').value.trim();
+            const zone = document.getElementById('set-ad-zone').value.trim();
+            const enabled = document.getElementById('set-ads-toggle').value === 'true';
+            const abEnabled = document.getElementById('set-adblock-toggle').value === 'true';
+            db.collection('config').doc('app_settings').set({ name, adZoneId: zone, adsEnabled: enabled,
+                    adBlockerEnabled: abEnabled }, { merge: true })
+                .then(() => { showToast('✅ সেটিংস সেভ হয়েছে');
+                    if (zone && enabled) injectMonetagSDK(zone); })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function updateSocialMainLinks() {
+            const tgChannel = document.getElementById('set-link-tg-chan').value.trim();
+            const tgChat = document.getElementById('set-link-tg-chat').value.trim();
+            const fbPage = document.getElementById('set-link-fb-page').value.trim();
+            const fbGroup = document.getElementById('set-link-fb-group').value.trim();
+            db.collection('config').doc('social_links').set({ tgChannel, tgChat, fbPage, fbGroup, customLinks: customSocialLinks },
+                    { merge: true })
+                .then(() => { showToast('✅ লিংক সেভ হয়েছে');
+                    renderSocialJoinButtons(); })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 27. ADMIN — PAGES
+        // ════════════════════════════════════════════════════════════════
+        function renderPagesList() {
+            const container = document.getElementById('admin-pages-list');
+            if (!container) return;
+            db.collection('pages').get()
+                .then(snap => {
+                    const pages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (pages.length === 0) {
+                        container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">কোনো পেজ নেই</p>';
+                        return;
+                    }
+                    container.innerHTML = pages.map(p => `
+                        <div class="page-item">
+                            <div><h4 class="font-bold text-sm text-gray-800">${p.title || p.slug}</h4><span class="text-[10px] text-gray-400">/${p.slug} • ${p.published ? '✅ প্রকাশিত' : '⛔ অপ্রকাশিত'}</span></div>
+                            <div class="flex gap-2 flex-wrap">
+                                <button onclick="openPageEditor('${p.id}')" class="bg-blue-50 text-blue-600 text-[10px] px-3 py-1 rounded font-bold">✏️ Edit</button>
+                                <button onclick="togglePagePublish('${p.id}', ${p.published})" class="bg-amber-50 text-amber-600 text-[10px] px-3 py-1 rounded font-bold">${p.published ? 'Unpublish' : 'Publish'}</button>
+                                <button onclick="deletePage('${p.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1 rounded font-bold">🗑️</button>
+                                <button onclick="openDynamicPage('${p.slug}')" class="bg-green-50 text-green-600 text-[10px] px-3 py-1 rounded font-bold">👁️ View</button>
+                            </div>
+                        </div>
+                    `).join('');
+                    // Update remote config dropdowns
+                    const privacySelect = document.getElementById('rc-privacy-page');
+                    const termsSelect = document.getElementById('rc-terms-page');
+                    if (privacySelect) {
+                        privacySelect.innerHTML = pages.map(p => `<option value="${p.slug}">${p.title || p.slug}</option>`)
+                            .join('');
+                    }
+                    if (termsSelect) {
+                        termsSelect.innerHTML = pages.map(p => `<option value="${p.slug}">${p.title || p.slug}</option>`)
+                            .join('');
+                    }
+                })
+                .catch(err => container.innerHTML = '<p class="text-xs text-red-500">Error loading pages</p>');
+        }
+
+        function createNewPage() {
+            const slug = document.getElementById('new-page-slug').value.trim().toLowerCase().replace(/\s+/g, '-');
+            const title = document.getElementById('new-page-title').value.trim();
+            if (!slug || !title) { showToast('⚠️ স্লাগ ও টাইটেল দিন'); return; }
+            db.collection('pages').doc(slug).set({
+                slug,
+                title,
+                content: '<p>আপনার কন্টেন্ট এখানে লিখুন...</p>',
+                published: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                showToast('✅ পেজ তৈরি হয়েছে');
+                document.getElementById('new-page-slug').value = '';
+                document.getElementById('new-page-title').value = '';
+                renderPagesList();
+            }).catch(err => showToast('❌ ' + err.message));
+        }
+
+        function openPageEditor(pageId) {
+            db.collection('pages').doc(pageId).get()
+                .then(doc => {
+                    if (!doc.exists) { showToast('❌ পেজ পাওয়া যায়নি'); return; }
+                    const data = doc.data();
+                    document.getElementById('edit-page-id').value = pageId;
+                    document.getElementById('edit-page-title').value = data.title || '';
+                    document.getElementById('page-editor-container').classList.remove('hidden');
+                    if (!pageEditorQuill) {
+                        pageEditorQuill = new Quill('#page-editor-quill', {
+                            theme: 'snow',
+                            placeholder: 'পেজ কন্টেন্ট লিখুন...',
+                            modules: { toolbar: [
+                                    ['bold', 'italic', 'underline'],
+                                    [{ 'header': [1, 2, false] }],
+                                    ['clean']
+                                ] }
+                        });
+                    }
+                    pageEditorQuill.root.innerHTML = data.content || '';
+                    document.getElementById('page-editor-container').scrollIntoView({ behavior: 'smooth' });
+                })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function savePageContent() {
+            const id = document.getElementById('edit-page-id').value;
+            const title = document.getElementById('edit-page-title').value.trim();
+            if (!id || !title) { showToast('⚠️ টাইটেল দিন'); return; }
+            const content = pageEditorQuill ? pageEditorQuill.root.innerHTML : '';
+            db.collection('pages').doc(id).update({
+                title,
+                content,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                showToast('✅ পেজ সেভ হয়েছে');
+                renderPagesList();
+                closePageEditor();
+            }).catch(err => showToast('❌ ' + err.message));
+        }
+
+        function closePageEditor() {
+            document.getElementById('page-editor-container').classList.add('hidden');
+            document.getElementById('edit-page-id').value = '';
+            document.getElementById('edit-page-title').value = '';
+            if (pageEditorQuill) pageEditorQuill.root.innerHTML = '';
+        }
+
+        function togglePagePublish(slug, current) {
+            db.collection('pages').doc(slug).update({ published: !current })
+                .then(() => { showToast(!current ? '✅ পেজ প্রকাশিত' : '⛔ পেজ অপ্রকাশিত');
+                    renderPagesList(); })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function deletePage(slug) {
+            if (!confirm('পেজটি মুছতে চান?')) return;
+            db.collection('pages').doc(slug).delete()
+                .then(() => { showToast('🗑️ পেজ ডিলিট');
+                    renderPagesList(); })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function openDynamicPage(slug) {
+            db.collection('pages').doc(slug).get()
+                .then(doc => {
+                    if (!doc.exists) { showToast('❌ পেজ পাওয়া যায়নি'); return; }
+                    const data = doc.data();
+                    if (!data.published && !isAdmin) { showToast('⛔ এই পেজ প্রকাশিত নয়'); return; }
+                    document.getElementById('dynamic-page-modal-title').innerText = data.title || slug;
+                    document.getElementById('dynamic-page-modal-body').innerHTML = data.content ||
+                        '<p>কন্টেন্ট নেই</p>';
+                    document.getElementById('dynamic-page-modal').classList.remove('hidden');
+                })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        function closeDynamicPage() {
+            document.getElementById('dynamic-page-modal').classList.add('hidden');
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 28. ADMIN — REMOTE CONFIG
+        // ════════════════════════════════════════════════════════════════
+        function loadRemoteConfigForAdmin() {
+            db.collection('config').doc('remote_config').get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        document.getElementById('rc-app-name').value = data.appName || '';
+                        document.getElementById('rc-app-logo').value = data.appLogo || '';
+                        document.getElementById('rc-theme').value = data.theme || 'light';
+                        document.getElementById('rc-version').value = data.version || '';
+                        document.getElementById('rc-telegram-link').value = data.telegramLink || '';
+                        document.getElementById('rc-support-link').value = data.supportLink || '';
+                        document.getElementById('rc-maintenance').value = data.maintenance ? 'true' : 'false';
+                        document.getElementById('rc-announcement').value = data.announcement || '';
+                    }
+                    return db.collection('pages').get();
+                })
+                .then(snap => {
+                    const pages = snap.docs.map(d => ({ slug: d.id, title: d.data().title || d.id }));
+                    const privacySelect = document.getElementById('rc-privacy-page');
+                    const termsSelect = document.getElementById('rc-terms-page');
+                    if (privacySelect) {
+                        privacySelect.innerHTML = pages.map(p => `<option value="${p.slug}">${p.title}</option>`)
+                            .join('');
+                    }
+                    if (termsSelect) {
+                        termsSelect.innerHTML = pages.map(p => `<option value="${p.slug}">${p.title}</option>`)
+                            .join('');
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        function saveRemoteConfig() {
+            const data = {
+                appName: document.getElementById('rc-app-name').value.trim(),
+                appLogo: document.getElementById('rc-app-logo').value.trim(),
+                theme: document.getElementById('rc-theme').value,
+                version: document.getElementById('rc-version').value.trim(),
+                telegramLink: document.getElementById('rc-telegram-link').value.trim(),
+                supportLink: document.getElementById('rc-support-link').value.trim(),
+                privacyPage: document.getElementById('rc-privacy-page').value,
+                termsPage: document.getElementById('rc-terms-page').value,
+                maintenance: document.getElementById('rc-maintenance').value === 'true',
+                announcement: document.getElementById('rc-announcement').value.trim(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            db.collection('config').doc('remote_config').set(data, { merge: true })
+                .then(() => {
+                    Object.assign(REMOTE_CONFIG, data);
+                    showToast('✅ রিমোট কনফিগ সেভ হয়েছে');
+                    if (data.theme === 'dark') document.body.classList.add('night-mode');
+                    else document.body.classList.remove('night-mode');
+                    document.getElementById('app-nav-title').innerText = data.appName || 'B.C.G';
+                    document.getElementById('app-title-tag').innerText = data.appName || 'বাংলা চটি গল্প';
+                    document.getElementById('landing-title').innerText = data.appName || 'বাংলা চটি গল্প';
+                    if (data.announcement) showToast('📢 ' + data.announcement);
+                })
+                .catch(err => showToast('❌ ' + err.message));
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 29. ADMIN — UPDATE LOGS
+        // ════════════════════════════════════════════════════════════════
+        function renderAdminUpdateLogs(logs) {
+            const container = document.getElementById('admin-update-logs');
+            if (!container) return;
+            if (!logs || logs.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">কোনো আপডেট লগ নেই</p>';
+                return;
+            }
+            container.innerHTML = logs.slice(0, 50).map(log => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border">
+                    <div><span class="text-sm font-medium text-gray-800">${log.message}</span><span class="text-[10px] text-gray-400 block">${log.type || 'update'} • ${log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString('bn-BD') : ''}</span></div>
+                    <span class="text-[9px] ${log.seen ? 'text-gray-400' : 'text-blue-500 font-bold'}">${log.seen ? '✅ Seen' : '🆕 New'}</span>
+                </div>
+            `).join('');
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 30. ADMIN — LISTENERS
+        // ════════════════════════════════════════════════════════════════
+        function setupAdminListeners() {
+            db.collection('stories').onSnapshot(snap => {
+                stories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (!document.getElementById('admin-section-stories').classList.contains('hidden')) renderAdminListUI();
+                renderAdminDashboard();
+                renderCategoryStats();
+            });
+
+            db.collection('config').doc('categories').onSnapshot(doc => {
+                if (doc.exists && doc.data().list) {
+                    categories = doc.data().list;
+                } else {
+                    categories = [];
+                }
+                renderCategoriesUI();
+                renderAdminCategories();
+                renderCategoryStats();
+            });
+
+            db.collection('config').doc('app_settings').onSnapshot(doc => {
+                if (doc.exists) {
+                    appSettings = doc.data();
+                    document.getElementById('app-nav-title').innerText = appSettings.name || 'B.C.G';
+                    document.getElementById('set-app-name').value = appSettings.name || '';
+                    document.getElementById('set-ad-zone').value = appSettings.adZoneId || '';
+                    document.getElementById('set-ads-toggle').value = appSettings.adsEnabled ? 'true' : 'false';
+                    document.getElementById('set-adblock-toggle').value = appSettings.adBlockerEnabled ?
+                        'true' : 'false';
+                    document.getElementById('set-comments-mod-toggle').value = appSettings.commentsModerated ?
+                        'true' : 'false';
+                    if (!isAdmin && appSettings.adsEnabled && appSettings.adZoneId) {
+                        injectMonetagSDK(appSettings.adZoneId);
+                    }
+                    checkAdBlocker();
+                }
+            });
+
+            db.collection('config').doc('social_links').onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    socialMainLinks = {
+                        tgChannel: data.tgChannel || '',
+                        tgChat: data.tgChat || '',
+                        fbPage: data.fbPage || '',
+                        fbGroup: data.fbGroup || ''
+                    };
+                    customSocialLinks = data.customLinks || [];
+                    document.getElementById('set-link-tg-chan').value = socialMainLinks.tgChannel;
+                    document.getElementById('set-link-tg-chat').value = socialMainLinks.tgChat;
+                    document.getElementById('set-link-fb-page').value = socialMainLinks.fbPage;
+                    document.getElementById('set-link-fb-group').value = socialMainLinks.fbGroup;
+                    renderSocialJoinButtons();
+                }
+            });
+
+            db.collection('config').doc('ad_settings').onSnapshot(doc => {
+                if (doc.exists) {
+                    AD_SETTINGS = doc.data();
+                    renderBanner('home');
+                    renderBanner('storyList');
+                    renderBanner('storyReading');
+                    renderBanner('profile');
+                    if (!document.getElementById('admin-section-ads').classList.contains('hidden')) {
+                        renderAdsManagementUI();
+                    }
+                }
+            });
+
+            db.collection('config').doc('remote_config').onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    Object.assign(REMOTE_CONFIG, data);
+                    if (data.theme === 'dark') document.body.classList.add('night-mode');
+                    else document.body.classList.remove('night-mode');
+                    if (data.appName) {
+                        document.getElementById('app-nav-title').innerText = data.appName;
+                        document.getElementById('app-title-tag').innerText = data.appName;
+                        document.getElementById('landing-title').innerText = data.appName;
+                    }
+                    if (data.announcement) {
+                        const ann = data.announcement;
+                        const lastSeen = localStorage.getItem('last_announcement_seen');
+                        if (lastSeen !== ann) {
+                            showToast('📢 ' + ann);
+                            localStorage.setItem('last_announcement_seen', ann);
+                        }
+                    }
+                }
+            });
+
+            db.collection('notifications').orderBy('timestamp', 'desc').onSnapshot(snap => {
+                notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                const lastSeen = parseInt(localStorage.getItem('lastNotifSeen') || '0');
+                const hasUnread = notifications.some(n => n.timestamp?.seconds > lastSeen);
+                document.getElementById('notif-dot').classList.toggle('hidden', !hasUnread);
+                if (!document.getElementById('notif-panel').classList.contains('hidden')) {
+                    renderNotifications();
+                }
+            });
+
+            db.collection('update_logs').orderBy('timestamp', 'desc').onSnapshot(snap => {
+                updateLogs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (!document.getElementById('admin-section-updates').classList.contains('hidden')) {
+                    renderAdminUpdateLogs(updateLogs);
+                }
+            });
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 31. ADBLOCK CHECK
+        // ════════════════════════════════════════════════════════════════
+        function checkAdBlocker() {
+            if (isAdmin) { document.getElementById('adblock-modal').classList.add('hidden'); return; }
+            if (appSettings.adBlockerEnabled) {
+                setTimeout(() => {
+                    const zoneId = appSettings.adZoneId;
+                    const showAdFunc = zoneId ? window['show_' + zoneId] : null;
+                    if (appSettings.adsEnabled && zoneId && !showAdFunc && !isAdmin) {
+                        document.getElementById('adblock-modal').classList.remove('hidden');
+                    }
+                }, 3000);
+            }
+        }
+
+        function injectMonetagSDK(zoneId) {
+            if (!zoneId) return;
+            if (document.getElementById('monetag-sdk-script')) return;
+            const script = document.createElement('script');
+            script.id = 'monetag-sdk-script';
+            script.src = 'https://cdn.monetag.com/sdk.js';
+            script.setAttribute('data-zone', zoneId);
+            script.setAttribute('data-sdk', 'show_' + zoneId);
+            document.head.appendChild(script);
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 32. NIGHT MODE
+        // ════════════════════════════════════════════════════════════════
+        function toggleNightMode() {
+            document.body.classList.toggle('night-mode');
+            localStorage.setItem('nightMode', document.body.classList.contains('night-mode'));
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 33. SCROLL HANDLER
+        // ════════════════════════════════════════════════════════════════
+        function handleScroll() {
+            const readingScreen = document.getElementById('reading-screen');
+            if (!readingScreen || readingScreen.classList.contains('hidden') || !currentStoryId) return;
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = document.getElementById('reading-progress');
+            if (progress) progress.style.width = (winScroll / height) * 100 + "%";
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const title = document.getElementById('read-title');
+                if (title) {
+                    localStorage.setItem('last_read', JSON.stringify({
+                        id: currentStoryId,
+                        title: title.innerText,
+                        position: winScroll
+                    }));
+                }
+            }, 500);
+        }
+
+        function setupInfiniteScroll() {
+            const sentinel = document.getElementById('sentinel');
+            if (!sentinel) return;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !isLoading && !allStoriesLoaded) {
+                        const readingScreen = document.getElementById('reading-screen');
+                        if (readingScreen && !readingScreen.classList.contains('hidden')) return;
+                        loadMoreStories();
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(sentinel);
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        // 34. INIT
+        // ════════════════════════════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.Telegram?.WebApp?.expand) window.Telegram.WebApp.expand();
+            if (window.Telegram?.WebApp?.ready) window.Telegram.WebApp.ready();
+
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+            }, 6000);
+
+            if (localStorage.getItem('nightMode') === 'true') document.body.classList.add('night-mode');
+
+            window.addEventListener('scroll', handleScroll);
+            setupInfiniteScroll();
+
+            // Init categories
+            db.collection('config').doc('categories').get()
+                .then(doc => {
+                    if (doc.exists && doc.data().list) categories = doc.data().list;
+                    renderCategoriesUI();
+                })
+                .catch(() => renderCategoriesUI());
+
+            initAuth();
+
+            // Handle start param
+            const params = new URLSearchParams(window.location.search);
+            const sharedId = params.get('id') || window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+            if (sharedId) {
+                document.getElementById('landing-page').classList.add('hidden');
+                setTimeout(() => openStory(sharedId), 1000);
+            }
+
+            // Quill for admin
+            setTimeout(() => {
+                if (document.getElementById('quill-editor-container')) {
+                    quillEditor = new Quill('#quill-editor-container', {
+                        theme: 'snow',
+                        placeholder: 'গল্প লেখা শুরু করুন...',
+                        modules: { toolbar: [
+                                ['bold', 'italic', 'underline'],
+                                [{ 'header': [1, 2, false] }],
+                                ['clean']
+                            ] }
+                    });
+                }
+            }, 500);
+
+            // Age gate
+            if (!localStorage.getItem('age_verified')) {
+                document.getElementById('age-gate').classList.remove('hidden');
+            }
+
+            console.log('✅ বাংলা চটি গল্প v2.0 — Loaded successfully with new Firebase project!');
+        });
+
+        console.log('✅ All modules loaded.');
+    </script>
+
+</body>
+</html>
