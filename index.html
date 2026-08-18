@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta name="monetag" content="e5ae78e81e6aed65010135b9ae000ef9">
+    <!-- Monetag Verification Meta Tag -->
+    <meta name="monetag" content="e5ae78e81e6aed65010135b9ae000ef9">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>বাংলা চটি গল্প</title>
 
-    <!-- Open Graph -->
+    <!-- Open Graph / Social Media Preview -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="বাংলা চটি গল্প" />
     <meta property="og:description" content="পড়ুন সেরা সব বাংলা চটি গল্পের ভাণ্ডার একদম ফ্রিতে।" />
     <meta property="og:image" content="https://i.postimg.cc/8z8hXb6s/logo.jpg" />
+    <meta name="telegram:bot" content="@Bangalchotigolpo_bot" />
+    <meta name="telegram:mini-app" content="true" />
 
     <link rel="manifest" href="manifest.json" />
     <script src="https://telegram.org/js/telegram-web-app.js">
@@ -28,7 +31,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js">
     </script>
 
-    <!-- Security & Editor -->
+    <!-- Security & Quill Editor -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js">
     </script>
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
@@ -37,11 +40,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
     </script>
 
-    <!-- Google Font: Hind Siliguri -->
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <style>
-        /* ─── RESET & BASE ─── */
+        /* RESET & BASE */
         * {
             margin: 0;
             padding: 0;
@@ -144,7 +147,7 @@
             display: none !important;
         }
 
-        /* ─── LOADER ─── */
+        /* LOADER */
         .loader {
             border: 3px solid #f1f5f9;
             border-top: 3px solid #2563eb;
@@ -170,7 +173,7 @@
             scrollbar-width: none;
         }
 
-        /* ─── TOAST ─── */
+        /* TOAST */
         #toast-container {
             position: fixed;
             top: 20px;
@@ -213,7 +216,7 @@
             background: #92400e;
         }
 
-        /* ─── SKELETON ─── */
+        /* SKELETON */
         .skeleton {
             background: #e2e8f0;
             animation: pulse 1.5s infinite;
@@ -232,7 +235,7 @@
             }
         }
 
-        /* ─── NAV ─── */
+        /* NAV */
         .nav-btn.active {
             color: #2563eb;
         }
@@ -243,7 +246,7 @@
             color: #60a5fa;
         }
 
-        /* ─── READING PROGRESS ─── */
+        /* READING PROGRESS */
         #reading-progress {
             position: fixed;
             top: 0;
@@ -255,7 +258,7 @@
             transition: width 0.15s;
         }
 
-        /* ─── QUILL ─── */
+        /* QUILL */
         .ql-container {
             min-height: 200px;
             font-size: 16px;
@@ -265,7 +268,7 @@
             min-height: 200px;
         }
 
-        /* ─── ANIMATIONS ─── */
+        /* ANIMATIONS */
         .fade-in {
             animation: fadeIn 0.25s ease-out forwards;
         }
@@ -289,7 +292,7 @@
             }
         }
 
-        /* ─── READING BG ─── */
+        /* READING BG */
         #reading-bg {
             position: fixed;
             top: 0;
@@ -304,7 +307,7 @@
             transition: opacity 0.3s, background-image 0.5s ease;
         }
 
-        /* ─── ADMIN TABS ─── */
+        /* ADMIN TABS */
         .admin-tab-btn {
             padding: 8px 14px;
             font-weight: 600;
@@ -326,7 +329,7 @@
             border-bottom-color: #60a5fa;
         }
 
-        /* ─── CARDS ─── */
+        /* CARDS */
         .admin-card {
             background: #fff;
             border-radius: 16px;
@@ -389,7 +392,7 @@
             border-color: #334155;
         }
 
-        /* ─── BANNER AD ─── */
+        /* BANNER AD */
         .banner-ad-container {
             margin: 12px 0;
             padding: 8px;
@@ -414,7 +417,7 @@
             border-radius: 8px;
         }
 
-        /* ─── REACTION GRID ─── */
+        /* REACTION GRID */
         .reaction-grid {
             display: flex;
             gap: 8px;
@@ -451,7 +454,7 @@
             color: #94a3b8;
         }
 
-        /* ─── BANNER PREVIEW ─── */
+        /* BANNER PREVIEW */
         .banner-preview {
             background: #f1f5f9;
             border-radius: 8px;
@@ -470,7 +473,7 @@
             border-color: #475569;
         }
 
-        /* ─── FILE DROP ─── */
+        /* FILE DROP */
         .file-drop-zone {
             border: 2px dashed #94a3b8;
             border-radius: 16px;
@@ -493,7 +496,7 @@
             background: #1e3a5f;
         }
 
-        /* ─── CATEGORY BADGE ─── */
+        /* CATEGORY BADGE */
         .cat-badge {
             display: inline-block;
             background: #dbeafe;
@@ -507,14 +510,6 @@
         .night-mode .cat-badge {
             background: #1e3a5f;
             color: #93c5fd;
-        }
-
-        /* ─── MISC ─── */
-        .vip-badge,
-        .vip-section-title,
-        .vip-card,
-        .vip-unlock-overlay {
-            display: none !important;
         }
 
         .bottom-nav {
@@ -544,7 +539,6 @@
             transform: scale(0.96);
         }
 
-        /* scrollbar for admin panels */
         .admin-scroll {
             max-height: 480px;
             overflow-y: auto;
@@ -560,7 +554,6 @@
             background: #475569;
         }
 
-        /* ensure quill in night mode */
         .night-mode .ql-toolbar.ql-snow {
             border-color: #475569 !important;
         }
@@ -572,17 +565,17 @@
 
 <body>
 
-    <!-- ─── READING PROGRESS ─── -->
+    <!-- READING PROGRESS -->
     <div id="reading-progress" class="hidden"></div>
     <div id="toast-container"></div>
 
-    <!-- ─── LOADING SCREEN ─── -->
+    <!-- LOADING SCREEN -->
     <div id="loading-screen" class="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center">
         <div class="loader mb-4"></div>
         <p class="text-gray-500 text-sm font-medium animate-pulse">লোড হচ্ছে...</p>
     </div>
 
-    <!-- ─── 18+ GATE ─── -->
+    <!-- 18+ GATE -->
     <div id="age-gate" class="hidden fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-5 backdrop-blur-sm">
         <div class="bg-white p-6 rounded-2xl max-w-sm text-center shadow-2xl border-t-4 border-red-600">
             <div class="text-5xl mb-4">🔞</div>
@@ -592,7 +585,7 @@
         </div>
     </div>
 
-    <!-- ─── AUTH MODAL (Admin) ─── -->
+    <!-- AUTH MODAL (Admin) -->
     <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-end md:items-center justify-center p-0 md:p-5 backdrop-blur-sm">
         <div class="bg-white p-6 rounded-t-3xl md:rounded-2xl w-full max-w-sm shadow-2xl slide-up">
             <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-5 md:hidden"></div>
@@ -607,7 +600,7 @@
         </div>
     </div>
 
-    <!-- ─── GUIDELINES POPUP ─── -->
+    <!-- GUIDELINES POPUP -->
     <div id="guidelines-popup" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="w-full max-w-md bg-white border border-gray-100 rounded-3xl shadow-xl overflow-hidden slide-up">
             <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-5 py-3 flex justify-between items-center">
@@ -626,7 +619,7 @@
         </div>
     </div>
 
-    <!-- ─── GUIDELINES PAGE ─── -->
+    <!-- GUIDELINES PAGE -->
     <div id="guidelines-page" class="hidden fixed inset-0 z-[150] bg-white overflow-y-auto pb-20 fade-in">
         <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-gray-100 p-3 flex justify-between items-center z-20 shadow-sm">
             <h2 class="text-xl font-bold text-gray-800">📖 অ্যাপ নির্দেশিকা</h2>
@@ -637,7 +630,7 @@
         </div>
     </div>
 
-    <!-- ─── LANDING ─── -->
+    <!-- LANDING -->
     <div id="landing-page" class="fixed inset-0 z-[60] flex flex-col items-center justify-center p-6 text-center text-white bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800">
         <div class="bg-white/10 backdrop-blur-md p-10 rounded-3xl border border-white/20 shadow-2xl animate-[bounce_2s_infinite]">
             <h1 class="text-4xl font-extrabold mb-2 tracking-wide" id="landing-title">বাংলা চটি গল্প</h1>
@@ -646,7 +639,7 @@
         </div>
     </div>
 
-    <!-- ─── ADBLOCK MODAL ─── -->
+    <!-- ADBLOCK MODAL -->
     <div id="adblock-modal" class="hidden fixed inset-0 z-[120] bg-black/95 flex items-center justify-center p-5 backdrop-blur-md">
         <div class="w-full max-w-sm bg-white p-6 rounded-3xl text-center shadow-2xl border-t-4 border-red-500 slide-up">
             <div class="text-5xl mb-4">🛡️</div>
@@ -656,7 +649,7 @@
         </div>
     </div>
 
-    <!-- ─── DYNAMIC PAGE MODAL ─── -->
+    <!-- DYNAMIC PAGE MODAL -->
     <div id="dynamic-page-modal" class="hidden fixed inset-0 z-[160] bg-white overflow-y-auto pb-20 fade-in">
         <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-gray-100 p-3 flex justify-between items-center z-20 shadow-sm">
             <h2 id="dynamic-page-modal-title" class="text-xl font-bold text-gray-800">পৃষ্ঠা</h2>
@@ -666,7 +659,7 @@
     </div>
 
     <!-- ════════════════════════════════════════════════════ -->
-    <!-- ─── HOME SCREEN ─── -->
+    <!-- HOME SCREEN -->
     <!-- ════════════════════════════════════════════════════ -->
     <div id="home-screen" class="pb-6 fade-in">
         <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-100 px-5 py-3 flex justify-between items-center shadow-sm">
@@ -739,7 +732,7 @@
     </div>
 
     <!-- ════════════════════════════════════════════════════ -->
-    <!-- ─── PROFILE SCREEN ─── -->
+    <!-- PROFILE SCREEN -->
     <!-- ════════════════════════════════════════════════════ -->
     <div id="profile-screen" class="hidden min-h-screen bg-white pb-24 fade-in">
         <div class="bg-gradient-to-b from-blue-600 to-blue-500 p-8 text-white text-center rounded-b-[2.5rem] shadow-lg relative">
@@ -778,7 +771,7 @@
     </div>
 
     <!-- ════════════════════════════════════════════════════ -->
-    <!-- ─── READING SCREEN ─── -->
+    <!-- READING SCREEN -->
     <!-- ════════════════════════════════════════════════════ -->
     <div id="reading-screen" class="hidden min-h-screen bg-white z-40 pb-20 fade-in relative">
         <div id="reading-bg"></div>
@@ -841,7 +834,7 @@
         </div>
     </div>
 
-    <!-- ─── SHARE MODAL ─── -->
+    <!-- SHARE MODAL -->
     <div id="share-modal" class="hidden fixed inset-0 z-[100] bg-black/60 flex items-end justify-center backdrop-blur-sm">
         <div class="bg-white w-full max-w-md rounded-t-3xl p-6 slide-up relative">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-5"></div>
@@ -868,7 +861,7 @@
         </div>
     </div>
 
-    <!-- ─── NOTIFICATION PANEL ─── -->
+    <!-- NOTIFICATION PANEL -->
     <div id="notif-panel" class="hidden fixed inset-0 z-[70] bg-black/60 flex items-end justify-center backdrop-blur-sm">
         <div class="bg-white w-full max-w-md rounded-t-3xl p-6 slide-up max-h-[70vh] flex flex-col">
             <div class="flex justify-between items-center border-b pb-3 mb-3">
@@ -880,7 +873,7 @@
     </div>
 
     <!-- ════════════════════════════════════════════════════ -->
-    <!-- ─── ADMIN PANEL ─── -->
+    <!-- ADMIN PANEL -->
     <!-- ════════════════════════════════════════════════════ -->
     <div id="admin-panel" class="hidden min-h-screen bg-gray-50 pb-24 fade-in">
         <div class="bg-white p-4 shadow-sm flex justify-between items-center sticky top-0 z-20 border-b">
@@ -903,7 +896,7 @@
 
         <div class="p-4 max-w-5xl mx-auto space-y-6">
 
-            <!-- ─── DASHBOARD ─── -->
+            <!-- DASHBOARD -->
             <div id="admin-section-dashboard" class="admin-section space-y-6">
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div class="bg-white p-5 rounded-2xl border shadow-sm text-center"><span class="text-xs font-bold text-gray-400 block mb-1">মোট গল্প</span><span id="dash-total-stories" class="text-2xl font-black text-blue-600">0</span></div>
@@ -919,7 +912,7 @@
                 </div>
             </div>
 
-            <!-- ─── WRITE STORY ─── -->
+            <!-- WRITE STORY -->
             <div id="admin-section-write" class="admin-section hidden">
                 <div class="bg-white p-5 rounded-xl shadow-sm border">
                     <div class="flex justify-between items-center mb-4 border-b pb-2">
@@ -973,13 +966,13 @@
                 </div>
             </div>
 
-            <!-- ─── STORIES LIST ─── -->
+            <!-- STORIES LIST -->
             <div id="admin-section-stories" class="admin-section hidden space-y-4">
                 <div class="relative"><span class="absolute left-3.5 top-3 text-gray-400">🔍</span><input type="text" id="admin-search-input" onkeyup="handleAdminStorySearch()" placeholder="তালিকায় গল্প খুঁজুন..." class="w-full pl-9 pr-4 py-2 border rounded-xl text-sm bg-white text-black shadow-sm outline-none" /></div>
                 <div id="admin-story-list" class="space-y-3 admin-scroll"></div>
             </div>
 
-            <!-- ─── CATEGORIES ─── -->
+            <!-- CATEGORIES -->
             <div id="admin-section-categories" class="admin-section hidden space-y-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border space-y-4">
                     <h3 class="font-bold text-lg text-gray-800 border-b pb-2">🏷️ ক্যাটাগরি ব্যবস্থাপনা</h3>
@@ -997,7 +990,7 @@
                 </div>
             </div>
 
-            <!-- ─── COMMENTS ─── -->
+            <!-- COMMENTS -->
             <div id="admin-section-comments" class="admin-section hidden space-y-4">
                 <div class="bg-white p-4 rounded-xl border flex flex-wrap justify-between items-center gap-3 shadow-sm">
                     <div><h4 class="font-bold text-gray-800 text-sm">কমেন্ট মডারেশন</h4><span class="text-[10px] text-gray-500 block">অন থাকলে কমেন্ট এডমিন অনুমোদনের পর দেখাবে</span></div>
@@ -1009,7 +1002,7 @@
                 <div id="admin-comments-moderation-list" class="space-y-3 admin-scroll"></div>
             </div>
 
-            <!-- ─── ADS ─── -->
+            <!-- ADS -->
             <div id="admin-section-ads" class="admin-section hidden space-y-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border">
                     <h3 class="font-bold text-lg text-gray-800 border-b pb-2">📢 এডস ম্যানেজমেন্ট</h3>
@@ -1019,7 +1012,7 @@
                 </div>
             </div>
 
-            <!-- ─── PAGES ─── -->
+            <!-- PAGES -->
             <div id="admin-section-pages" class="admin-section hidden space-y-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border">
                     <h3 class="font-bold text-lg text-gray-800 border-b pb-2">📄 পেজ ম্যানেজার</h3>
@@ -1045,7 +1038,7 @@
                 </div>
             </div>
 
-            <!-- ─── SETTINGS ─── -->
+            <!-- SETTINGS -->
             <div id="admin-section-settings" class="admin-section hidden space-y-6">
                 <div class="bg-white p-5 rounded-xl shadow-sm border space-y-4">
                     <h3 class="font-bold text-lg text-gray-800 border-b pb-2">⚙️ মূল সেটিংস</h3>
@@ -1091,7 +1084,7 @@
                 </div>
             </div>
 
-            <!-- ─── NOTIFICATIONS ─── -->
+            <!-- NOTIFICATIONS -->
             <div id="admin-section-notify" class="admin-section hidden space-y-6">
                 <div class="bg-white p-5 rounded-xl shadow-sm border space-y-4">
                     <h3 class="font-bold text-lg text-gray-800 border-b pb-2">🔔 নোটিফিকেশন পাঠান</h3>
@@ -1102,7 +1095,7 @@
                 </div>
             </div>
 
-            <!-- ─── UPDATE LOGS ─── -->
+            <!-- UPDATE LOGS -->
             <div id="admin-section-updates" class="admin-section hidden space-y-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border">
                     <h3 class="font-bold text-lg text-gray-800 border-b pb-2">📋 আপডেট লগ</h3>
@@ -1111,7 +1104,7 @@
                 </div>
             </div>
 
-            <!-- ─── GUIDELINES ─── -->
+            <!-- GUIDELINES -->
             <div id="admin-section-guidelines" class="admin-section hidden space-y-4">
                 <div class="bg-white p-5 rounded-xl shadow-sm border">
                     <h3 class="font-bold text-lg text-gray-800 border-b pb-2">📖 নির্দেশিকা সম্পাদনা</h3>
@@ -1129,7 +1122,7 @@
         </div><!-- end p-4 -->
     </div><!-- end admin-panel -->
 
-    <!-- ─── ADMIN COMMENT MODAL ─── -->
+    <!-- ADMIN COMMENT MODAL -->
     <div id="admin-comment-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl h-[80vh] flex flex-col slide-up">
             <div class="p-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
@@ -1140,7 +1133,7 @@
         </div>
     </div>
 
-    <!-- ─── BOTTOM NAV ─── -->
+    <!-- BOTTOM NAV -->
     <div id="bottom-nav" class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-50 px-6 py-2 flex justify-between items-center bottom-nav">
         <button onclick="switchTab('home')" class="nav-btn active flex flex-col items-center gap-1 p-2 text-gray-400 transition" id="nav-home"><span class="text-[20px]">🏠</span><span class="text-[10px]">হোম</span></button>
         <button onclick="switchTab('favorites')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 transition" id="nav-favorites"><span class="text-[20px]">❤️</span><span class="text-[10px]">ফেভারিট</span></button>
@@ -1149,7 +1142,7 @@
 
 
     <!-- ════════════════════════════════════════════════════ -->
-    <!-- ─── JAVASCRIPT ─── -->
+    <!-- JAVASCRIPT -->
     <!-- ════════════════════════════════════════════════════ -->
     <script>
         // ════════════════════════════════════════════════════════════════
